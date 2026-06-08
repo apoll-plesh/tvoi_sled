@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Твой след — благоустройство города</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="site-wrapper">
+        <!-- ШАПКА  -->
+        <header class="header">
+            <div class="container header__inner">
+                <div class="logo">
+                    <a href="/">
+                        <img src="/images/logo.svg" alt="Твой след" class="logo__img">
+                        <span class="logo__text">Твой след</span>
+                    </a>
+                </div>
+                <nav class="nav">
+                    <ul class="nav__list">
+                        <li><a href="#" class="nav__link">Новости</a></li>
+                        <li><a href="#" class="nav__link">О нас</a></li>
+                    </ul>
+                </nav>
+                <div class="header__search">
+                    <input type="text" placeholder="Поиск по сайту..." class="search-input">
+                    <button class="search-btn">🔍</button>
+                </div>
+                <div class="header__profile">
+                    <a href="#" class="profile-icon">
+                        <img src="images/profile-icon.svg" alt="Профиль">
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- ОСНОВНОЕ СОДЕРЖИМОЕ -->
+        <main class="main">
+            <div class="container">
+                
+                <!-- БЛОК 2: 4 блока новостей + кнопка -->
+                <section class="news-section">
+                    <div class="news-grid">
+                        <div class="news-card">
+                            <div class="news-card__image placeholder-img"></div>
+                            <h3 class="news-card__title">В Купчино установили новые скамейки</h3>
+                            <p class="news-card__date">12 мая 2026</p>
+                            <p class="news-card__excerpt">Благодаря вашим голосованиям в парке появилось 15 скамеек...</p>
+                        </div>
+                        <div class="news-card">
+                            <div class="news-card__image placeholder-img"></div>
+                            <h3 class="news-card__title">Стартовал сбор на освещение двора</h3>
+                            <p class="news-card__date">10 мая 2026</p>
+                            <p class="news-card__excerpt">Жители дома №10 по ул. Восстания собрали уже 30% суммы...</p>
+                        </div>
+                        <div class="news-card">
+                            <div class="news-card__image placeholder-img"></div>
+                            <h3 class="news-card__title">Как предлагать идеи? Новый гайд</h3>
+                            <p class="news-card__date">5 мая 2026</p>
+                            <p class="news-card__excerpt">Рассказываем, как ваша идея может стать реальностью...</p>
+                        </div>
+                        <div class="news-card">
+                            <div class="news-card__image placeholder-img"></div>
+                            <h3 class="news-card__title">Итоги голосования за апрель</h3>
+                            <p class="news-card__date">1 мая 2026</p>
+                            <p class="news-card__excerpt">Победила идея ремонта тротуара на Лиговском...</p>
+                        </div>
+                    </div>
+                    <div class="news-section__more">
+                        <button class="btn btn-link">Другие новости →</button>
+                    </div>
+                </section>
+
+                <!-- БЛОК 3: Текст с лозунгом и кнопкой i -->
+                <section class="callout-section">
+                    <div class="callout">
+                        <h2 class="callout__title">
+                            Предложи свои идеи!
+                            <button class="btn-info" id="infoModalBtn">i</button>
+                        </h2>
+                        <p class="callout__text">оставь свой след в истории своего города, помоги улучшить его для светлого будущего</p>
+                    </div>
+                </section>
+
+                <!-- БЛОК 4: Карта во всю ширину -->
+                <section class="map-section">
+                    <div class="map-container" id="mainMap">
+                        <!-- Заглушка карты -->
+                        <div class="map-placeholder">
+                            <img src="images/map-placeholder.jpg" alt="Карта Петербурга" class="map-placeholder__img">
+                            <div class="map-placeholder__text">Здесь будет карта Яндекс.Карт</div>
+                        </div>
+                    </div>
+                    <div class="map-credit">при поддержке Яндекс карт</div>
+                </section>
+
+            </div>
+        </main>
+
+        <!-- ФУТТЕР -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer__slogan">Спасибо, что вносите свой вклад в наше общее будущее!</div>
+                <div class="footer__columns">
+                    <!-- Левые ссылки (2 столбца) -->
+                    <div class="footer__links">
+                        <div class="footer__links-col">
+                            <a href="#">Главная</a>
+                            <a href="#">Новости</a>
+                            <a href="#">Профиль</a>
+                        </div>
+                        <div class="footer__links-col">
+                            <a href="#">Волонтерам</a>
+                            <a href="#">Поддержка</a>
+                            <a href="#">О нас</a>
+                        </div>
+                    </div>
+                    <!-- Лого по центру -->
+                    <div class="footer__logo">
+                        <img src="images/logo.svg" alt="Твой след">
+                        <span>Твой след</span>
+                    </div>
+                    <!-- Контакты + мессенджеры -->
+                    <div class="footer__contacts">
+                        <div class="footer__contacts-title">Связаться с нами</div>
+                        <div class="footer__socials">
+                            <a href="#"><img src="images/telegram.svg" alt="Telegram"></a>
+                            <a href="#"><img src="images/whatsapp.svg" alt="WhatsApp"></a>
+                            <a href="#"><img src="images/vk.svg" alt="ВКонтакте"></a>
+                            <a href="#"><img src="images/ok.svg" alt="Одноклассники"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО (кнопка i) -->
+    <div class="modal" id="infoModal">
+        <div class="modal__content">
+            <button class="modal__close" id="closeModalBtn">&times;</button>
+            <h3>Как предлагать идеи?</h3>
+            <p><strong>Найди на карте адрес и нажми по нему</strong> — откроется окно с текстовым полем, ниже будут чужие идеи.</p>
+            <p><strong>Своя идея:</strong> напиши в текстовом поле свою идею и нажми “отправить”. Она появится у тебя в профиле и на этом адресе, другие пользователи смогут оценивать твою идею.</p>
+            <p><strong>Чужие идеи:</strong> ты можешь листать и читать чужие идеи и ставить им лайки, за счет этого поднимать их рейтинг.</p>
+            <p><strong>Рейтинг и лайки:</strong> лайки повышают рейтинг идеи. Раз в квартал проводится голосование за идею, которую мы будем реализовывать. В голосовании участвуют лучшие идеи с высшим рейтингом.</p>
+        </div>
+    </div>
+
+    <script src="/script.js"></script>
+</body>
+</html>
