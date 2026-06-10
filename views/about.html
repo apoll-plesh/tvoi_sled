@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>О нас — Твой след</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="site-wrapper">
+        <!-- ШАПКА -->
+        <header class="header">
+            <div class="container header__inner">
+                <div class="logo">
+                    <a href="/">
+                        <img src="/images/logo.svg" alt="Твой след" class="logo__img">
+                        <span class="logo__text">Твой след</span>
+                    </a>
+                </div>
+                <nav class="nav">
+                    <ul class="nav__list">
+                        <li><a href="/news" class="nav__link">Новости</a></li>
+                        <li><a href="/about" class="nav__link nav__link--active">О нас</a></li>
+                    </ul>
+                </nav>
+                <div class="header__search">
+                    <input type="text" placeholder="Поиск по сайту..." class="search-input">
+                    <button class="search-btn">🔍</button>
+                </div>
+                <div class="header__profile">
+                    <a href="/profile" class="profile-icon">
+                        <img src="/images/profile-icon.svg" alt="Профиль">
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- ОСНОВНОЕ СОДЕРЖИМОЕ -->
+        <main class="main">
+            <div class="container">
+                
+                <!-- ЗАГОЛОВОК СТРАНИЦЫ -->
+                <section class="about-header">
+                    <h1 class="about-header__title">О нас</h1>
+                    <p class="about-header__subtitle">Сделать благоустройство города простым и доступным для каждого</p>
+                </section>
+
+                <!-- КТО МЫ (фото слева, текст справа) -->
+                <section class="about-section about-section--row">
+                    <div class="about-section__image">
+                        <img src="/images/my-photo.jpg" alt="Аполлинария Плешкова">
+                    </div>
+                    <div class="about-section__content">
+                        <h2 class="about-section__title">Кто мы</h2>
+                        <p>Меня зовут Аполлинария Плешкова, я студентка и автор проекта «Твой след». Я видела, как мои родственники и знакомые, работающие в госучреждениях, вынуждены просить у знакомых номер телефона, чтобы получить код для входа на порталы. Это отбивает желание участвовать в жизни города.</p>
+                        <p>«Твой след» — это платформа, где каждый может предложить идею по благоустройству, поддержать чужую инициативу лайком или рублём. Раз в три месяца мы вместе выбираем проект, который становится реальностью.</p>
+                    </div>
+                </section>
+
+                <!-- НАША МИССИЯ -->
+                <section class="about-section about-section--mission">
+                    <h2 class="about-section__title">Наша миссия</h2>
+                    <div class="about-section__content">
+                        <p>Сделать соучаствующее проектирование нормой жизни. Чтобы каждый житель Петербурга мог легко и быстро повлиять на то, что происходит в его дворе, парке или на улице. Никаких кодов по телефону, никаких долгих согласований — только ты, твоя идея и город, который становится лучше с каждым твоим следом.</p>
+                    </div>
+                </section>
+
+                <!-- СТАТИСТИКА -->
+                <section class="stats-section">
+                    <h2 class="stats-section__title">Наши достижения</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-card__number">47</div>
+                            <div class="stat-card__label">реализованных идей</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card__number">1 280 000 ₽</div>
+                            <div class="stat-card__label">собрано на проекты</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card__number">3 451</div>
+                            <div class="stat-card__label">активных пользователей</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card__number">126</div>
+                            <div class="stat-card__label">проектов в работе</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ФОТОГРАФИИ (карусель с кнопкой) -->
+                <section class="carousel-section">
+                    <div class="carousel-header">
+                        <h2 class="carousel-section__title">Фотографии</h2>
+                        <button class="carousel-next-btn" id="carouselNextBtn">→</button>
+                    </div>
+                    <div class="carousel-container">
+                        <div class="carousel-track" id="carouselTrack">
+                            <div class="carousel-slide">
+                                <img src="/images/photo1.jpg" alt="Команда проекта">
+                            </div>
+                            <div class="carousel-slide">
+                                <img src="/images/photo2.jpg" alt="Установка скамеек">
+                            </div>
+                            <div class="carousel-slide">
+                                <img src="/images/photo3.jpg" alt="Голосование">
+                            </div>
+                            <div class="carousel-slide">
+                                <img src="/images/photo4.jpg" alt="Субботник">
+                            </div>
+                            <div class="carousel-slide">
+                                <img src="/images/photo5.jpg" alt="Освещение двора">
+                            </div>
+                            <div class="carousel-slide">
+                                <img src="/images/photo6.jpg" alt="Волонтёры">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+
+        <!-- ФУТТЕР -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer__slogan">Спасибо, что вносите свой вклад в наше общее будущее!</div>
+                <div class="footer__columns">
+                    <div class="footer__links">
+                        <div class="footer__links-col">
+                            <a href="/">Главная</a>
+                            <a href="/news">Новости</a>
+                            <a href="/profile">Профиль</a>
+                        </div>
+                        <div class="footer__links-col">
+                            <a href="#">Волонтерам</a>
+                            <a href="#">Поддержка</a>
+                            <a href="/about">О нас</a>
+                        </div>
+                    </div>
+                    <div class="footer__logo">
+                        <img src="/images/logo.svg" alt="Твой след">
+                        <span>Твой след</span>
+                    </div>
+                    <div class="footer__contacts">
+                        <div class="footer__contacts-title">Связаться с нами</div>
+                        <div class="footer__socials">
+                            <a href="#"><img src="/images/telegram.svg" alt="Telegram"></a>
+                            <a href="#"><img src="/images/whatsapp.svg" alt="WhatsApp"></a>
+                            <a href="#"><img src="/images/vk.svg" alt="ВКонтакте"></a>
+                            <a href="#"><img src="/images/ok.svg" alt="Одноклассники"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новости — Твой след</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="site-wrapper">
+        <!-- ШАПКА (как на главной) -->
+        <header class="header">
+            <div class="container header__inner">
+                <div class="logo">
+                    <a href="/">
+                        <img src="/images/logo.svg" alt="Твой след" class="logo__img">
+                        <span class="logo__text">Твой след</span>
+                    </a>
+                </div>
+                <nav class="nav">
+                    <ul class="nav__list">
+                        <li><a href="/news" class="nav__link nav__link--active">Новости</a></li>
+                        <li><a href="/about" class="nav__link">О нас</a></li>
+                    </ul>
+                </nav>
+                <div class="header__search">
+                    <input type="text" placeholder="Поиск по сайту..." class="search-input">
+                    <button class="search-btn">🔍</button>
+                </div>
+                <div class="header__profile">
+                    <a href="/profile" class="profile-icon">
+                        <img src="/images/profile-icon.svg" alt="Профиль">
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- ОСНОВНОЕ СОДЕРЖИМОЕ -->
+        <main class="main">
+            <div class="container">
+                <!-- ЗАГОЛОВОК СТРАНИЦЫ -->
+                <section class="news-header">
+                    <h1 class="news-header__title">Ваш вклад не останется незамеченным</h1>
+                    <p class="news-header__text">Все важные события и маленькие шаги не проходят мимо. Каждое действие на пути к улучшению города важно!</p>
+                </section>
+
+                <!-- СПИСОК НОВОСТЕЙ (динамический) -->
+                <section class="news-list">
+                    <div class="news-grid" id="newsGrid">
+                        <!-- Сюда подгрузятся новости через JS -->
+                    </div>
+                </section>
+
+                <!-- ПАГИНАЦИЯ -->
+                <div class="pagination" id="pagination">
+                    <!-- Сюда подгрузится пагинация -->
+                </div>
+            </div>
+        </main>
+
+        <!-- ФУТТЕР (как на главной) -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer__slogan">Спасибо, что вносите свой вклад в наше общее будущее!</div>
+                <div class="footer__columns">
+                    <div class="footer__links">
+                        <div class="footer__links-col">
+                            <a href="/">Главная</a>
+                            <a href="/news">Новости</a>
+                            <a href="/profile">Профиль</a>
+                        </div>
+                        <div class="footer__links-col">
+                            <a href="#">Волонтерам</a>
+                            <a href="#">Поддержка</a>
+                            <a href="#">О нас</a>
+                        </div>
+                    </div>
+                    <div class="footer__logo">
+                        <img src="/images/logo.svg" alt="Твой след">
+                        <span>Твой след</span>
+                    </div>
+                    <div class="footer__contacts">
+                        <div class="footer__contacts-title">Связаться с нами</div>
+                        <div class="footer__socials">
+                            <a href="#"><img src="/images/telegram.svg" alt="Telegram"></a>
+                            <a href="#"><img src="/images/whatsapp.svg" alt="WhatsApp"></a>
+                            <a href="#"><img src="/images/vk.svg" alt="ВКонтакте"></a>
+                            <a href="#"><img src="/images/ok.svg" alt="Одноклассники"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ПОЛНОЙ НОВОСТИ -->
+    <div class="modal" id="newsModal">
+        <div class="modal__content modal__content--large">
+            <button class="modal__close" id="closeNewsModalBtn">&times;</button>
+            <div id="newsModalContent">
+                <!-- Сюда подставится содержимое новости -->
+            </div>
+        </div>
+    </div>
+
+    <script src="/script.js"></script>
+</body>
+</html>

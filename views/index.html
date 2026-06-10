@@ -19,8 +19,8 @@
                 </div>
                 <nav class="nav">
                     <ul class="nav__list">
-                        <li><a href="#" class="nav__link">Новости</a></li>
-                        <li><a href="#" class="nav__link">О нас</a></li>
+                        <li><a href="/news" class="nav__link">Новости</a></li>
+                        <li><a href="/about" class="nav__link">О нас</a></li>
                     </ul>
                 </nav>
                 <div class="header__search">
@@ -28,7 +28,7 @@
                     <button class="search-btn">🔍</button>
                 </div>
                 <div class="header__profile">
-                    <a href="#" class="profile-icon">
+                    <a href="/profile" class="profile-icon">
                         <img src="images/profile-icon.svg" alt="Профиль">
                     </a>
                 </div>
@@ -38,38 +38,35 @@
         <!-- ОСНОВНОЕ СОДЕРЖИМОЕ -->
         <main class="main">
             <div class="container">
+
+                <!-- ИНФОРМАЦИОННО-АКЦИОННЫЙ БЛОК -->
+                <section class="info-banner" id="infoBanner">
+                    <div class="info-banner__container">
+                        <div class="info-banner__header">
+                            <h2 class="info-banner__title" id="bannerTitle">Голосование за идеи весны 2026</h2>
+                            <button class="info-banner__action-btn" id="bannerActionBtn" style="display: none;">Чат голосования</button>
+                        </div>
+                        <div class="info-banner__content">
+                            <p class="info-banner__text" id="bannerText">Выберите лучшую идею для благоустройства города. Победитель будет реализован в этом квартале.</p>
+                            <a href="#" class="info-banner__read-more" id="bannerReadMore">Читать далее →</a>
+                        </div>
+                        <div class="info-banner__timer" id="bannerTimer" style="display: none;">
+                            <span class="timer-label">До конца голосования:</span>
+                            <span class="timer-digits" id="timerDigits">14д 08ч 32м</span>
+                        </div>
+                    </div>
+                </section>
                 
                 <!-- БЛОК 2: 4 блока новостей + кнопка -->
                 <section class="news-section">
-                    <div class="news-grid">
-                        <div class="news-card">
-                            <div class="news-card__image placeholder-img"></div>
-                            <h3 class="news-card__title">В Купчино установили новые скамейки</h3>
-                            <p class="news-card__date">12 мая 2026</p>
-                            <p class="news-card__excerpt">Благодаря вашим голосованиям в парке появилось 15 скамеек...</p>
+                    <section class="news-section">
+                        <div class="news-grid" id="mainNewsGrid">
+                            <!-- Сюда подгрузятся новости через JS -->
                         </div>
-                        <div class="news-card">
-                            <div class="news-card__image placeholder-img"></div>
-                            <h3 class="news-card__title">Стартовал сбор на освещение двора</h3>
-                            <p class="news-card__date">10 мая 2026</p>
-                            <p class="news-card__excerpt">Жители дома №10 по ул. Восстания собрали уже 30% суммы...</p>
+                        <div class="news-section__more">
+                            <a href="/news" class="btn-link">Другие новости →</a>
                         </div>
-                        <div class="news-card">
-                            <div class="news-card__image placeholder-img"></div>
-                            <h3 class="news-card__title">Как предлагать идеи? Новый гайд</h3>
-                            <p class="news-card__date">5 мая 2026</p>
-                            <p class="news-card__excerpt">Рассказываем, как ваша идея может стать реальностью...</p>
-                        </div>
-                        <div class="news-card">
-                            <div class="news-card__image placeholder-img"></div>
-                            <h3 class="news-card__title">Итоги голосования за апрель</h3>
-                            <p class="news-card__date">1 мая 2026</p>
-                            <p class="news-card__excerpt">Победила идея ремонта тротуара на Лиговском...</p>
-                        </div>
-                    </div>
-                    <div class="news-section__more">
-                        <button class="btn btn-link">Другие новости →</button>
-                    </div>
+                    </section>
                 </section>
 
                 <!-- БЛОК 3: Текст с лозунгом и кнопкой i -->
@@ -79,7 +76,7 @@
                             Предложи свои идеи!
                             <button class="btn-info" id="infoModalBtn">i</button>
                         </h2>
-                        <p class="callout__text">оставь свой след в истории своего города, помоги улучшить его для светлого будущего</p>
+                        <p class="callout__text">Оставь свой след в истории своего города, помоги улучшить его для светлого будущего</p>
                     </div>
                 </section>
 
@@ -145,6 +142,16 @@
             <p><strong>Своя идея:</strong> напиши в текстовом поле свою идею и нажми “отправить”. Она появится у тебя в профиле и на этом адресе, другие пользователи смогут оценивать твою идею.</p>
             <p><strong>Чужие идеи:</strong> ты можешь листать и читать чужие идеи и ставить им лайки, за счет этого поднимать их рейтинг.</p>
             <p><strong>Рейтинг и лайки:</strong> лайки повышают рейтинг идеи. Раз в квартал проводится голосование за идею, которую мы будем реализовывать. В голосовании участвуют лучшие идеи с высшим рейтингом.</p>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ПОДРОБНОСТЕЙ (ГОЛОСОВАНИЕ/ВОЛОНТЁРЫ/НОВОСТИ) -->
+    <div class="modal" id="detailModal">
+        <div class="modal__content modal__content--large">
+            <button class="modal__close" id="closeDetailModalBtn">&times;</button>
+            <div id="detailModalContent">
+                <!-- Сюда динамически подставляется содержимое -->
+            </div>
         </div>
     </div>
 
