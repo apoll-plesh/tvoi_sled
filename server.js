@@ -3,6 +3,15 @@ const session = require('express-session');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 
+// Отладка ошибок
+process.on('uncaughtException', (err) => {
+    console.error('❌ НЕПЕРЕХВАЧЕННАЯ ОШИБКА:', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('❌ НЕОБРАБОТАННОЕ ОТКЛОНЕНИЕ ПРОМИСА:', reason);
+});
+
 const app = express();
 const PORT = 3000;
 
@@ -11,6 +20,7 @@ const db = new sqlite3.Database('./database.sqlite');
 
 // Делаем db доступным для маршрутов
 app.locals.db = db;
+console.log('📁 База данных подключена, app.locals.db установлен');
 
 // ========== СОЗДАНИЕ ТАБЛИЦ ==========
 db.serialize(() => {
@@ -19,7 +29,8 @@ db.serialize(() => {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         email TEXT UNIQUE NOT NULL,
         password TEXT NOT NULL,
-        fullname TEXT,
+        firstname TEXT,
+        lastname TEXT,
         phone TEXT,
         card_number TEXT,
         card_expiry TEXT,
@@ -27,7 +38,7 @@ db.serialize(() => {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
     
-    // Остальные таблицы (заявки, комментарии, новости, баннер, голосования)
+    // Таблица заявок (предложений)
     db.run(`CREATE TABLE IF NOT EXISTS proposals (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
@@ -37,12 +48,13 @@ db.serialize(() => {
         lat REAL NOT NULL,
         lng REAL NOT NULL,
         photo TEXT,
-        status TEXT DEFAULT 'moderation',
+        status TEXT DEFAULT 'published',
         likes INTEGER DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users(id)
     )`);
     
+    // Таблица комментариев
     db.run(`CREATE TABLE IF NOT EXISTS comments (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         proposal_id INTEGER NOT NULL,
@@ -54,6 +66,7 @@ db.serialize(() => {
         FOREIGN KEY (user_id) REFERENCES users(id)
     )`);
     
+    // Таблица новостей
     db.run(`CREATE TABLE IF NOT EXISTS news (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
@@ -64,6 +77,7 @@ db.serialize(() => {
         is_main INTEGER DEFAULT 0
     )`);
     
+    // Таблица для баннера
     db.run(`CREATE TABLE IF NOT EXISTS banner_config (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         type TEXT NOT NULL,
@@ -76,6 +90,7 @@ db.serialize(() => {
         is_active INTEGER DEFAULT 1
     )`);
     
+    // Таблица для вариантов голосования
     db.run(`CREATE TABLE IF NOT EXISTS vote_options (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         banner_id INTEGER NOT NULL,
@@ -84,14 +99,27 @@ db.serialize(() => {
         FOREIGN KEY (banner_id) REFERENCES banner_config(id)
     )`);
     
+    // Таблица для лайков (чтобы один пользователь не мог лайкнуть дважды)
+    db.run(`CREATE TABLE IF NOT EXISTS proposal_likes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        proposal_id INTEGER NOT NULL,
+        user_id INTEGER NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (proposal_id) REFERENCES proposals(id),
+        FOREIGN KEY (user_id) REFERENCES users(id),
+        UNIQUE(proposal_id, user_id)
+    )`);
+    
+    // ========== ДЕМО-ДАННЫЕ ==========
+    
     // Добавляем тестового пользователя (если нет)
     db.get(`SELECT COUNT(*) as count FROM users`, (err, row) => {
         if (err) return;
         if (row.count === 0) {
             const bcrypt = require('bcrypt');
             const hashedPassword = bcrypt.hashSync('123456', 10);
-            db.run(`INSERT INTO users (email, password, fullname, phone) VALUES (?, ?, ?, ?)`,
-                ['test@test.ru', hashedPassword, 'Тестовый Пользователь', '+7 (999) 123-45-67']);
+            db.run(`INSERT INTO users (email, password, firstname, lastname, phone) VALUES (?, ?, ?, ?, ?)`,
+                ['test@test.ru', hashedPassword, 'Тестовый', 'Пользователь', '+7 (999) 123-45-67']);
             console.log('👤 Добавлен тестовый пользователь: test@test.ru / 123456');
         }
     });
@@ -115,12 +143,39 @@ db.serialize(() => {
         }
     });
     
+    // Добавляем тестовые заявки для пользователя (если нет)
+    db.get(`SELECT COUNT(*) as count FROM proposals`, (err, row) => {
+        if (err) return;
+        if (row.count === 0) {
+            db.get(`SELECT id FROM users LIMIT 1`, (err, userRow) => {
+                if (err || !userRow) return;
+                const userId = userRow.id;
+                
+                const testProposals = [
+                    { title: 'Яма во дворе дома 10', description: 'Огромная яма у подъезда, дети падают, машины ломают подвеску', address: 'ул. Восстания, 10', status: 'published', likes: 15, lat: 59.9311, lng: 30.3609 },
+                    { title: 'Сломана скамейка в парке', description: 'Скамейка возле фонтана сломана, пожилым людям негде отдохнуть', address: 'парк Ленина', status: 'published', likes: 3, lat: 59.9325, lng: 30.3550 },
+                    { title: 'Нет освещения у подъезда', description: 'Вечером очень темно, страшно заходить в подъезд', address: 'ул. Садовая, 25', status: 'published', likes: 42, lat: 59.9260, lng: 30.3180 },
+                    { title: 'Разбитая детская площадка', description: 'Качели сломаны, горка ржавая, нужен ремонт', address: 'бульвар Молодёжи, 5', status: 'realized', likes: 28, lat: 59.9400, lng: 30.3300 },
+                    { title: 'Установка урн для мусора', description: 'Весь мусор летает по газону, нужны дополнительные урны', address: 'набережная реки Фонтанки', status: 'realized', likes: 19, lat: 59.9200, lng: 30.3400 },
+                    { title: 'Ремонт тротуара', description: 'Плитка разбита, люди спотыкаются', address: 'Невский проспект, 50', status: 'published', likes: 56, lat: 59.9355, lng: 30.3450 }
+                ];
+                
+                const stmt = db.prepare(`INSERT INTO proposals (user_id, title, description, address, lat, lng, status, likes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`);
+                testProposals.forEach(prop => {
+                    stmt.run(userId, prop.title, prop.description, prop.address, prop.lat, prop.lng, prop.status, prop.likes);
+                });
+                stmt.finalize();
+                console.log('📋 Добавлены тестовые заявки для профиля (4 активные, 2 реализованные)');
+            });
+        }
+    });
+    
     // Добавляем тестовый баннер (если нет)
     db.get(`SELECT COUNT(*) as count FROM banner_config`, (err, row) => {
         if (err) return;
         if (row.count === 0) {
             db.run(`INSERT INTO banner_config (type, title, text, button_text, show_timer, end_date, modal_details, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-                ['vote', 'Голосование за идеи весны 2026', 'Выберите лучшую идею для благоустройства города. Победитель будет реализован в этом квартале.', 'Чат голосования', 1, '2026-06-30 23:59:59', 'В этом квартале мы выбрали 5 лучших идей по итогам рейтинга.', 1],
+                ['vote', 'Голосование за идеи весны 2026', 'Выберите лучшую идею для благоустройства города. Победитель будет реализован в этом квартале.', 'Чат голосования', 1, '2026-12-31 23:59:59', 'В этом квартале мы выбрали 5 лучших идей по итогам рейтинга.', 1],
                 function(err) {
                     if (!err) {
                         const bannerId = this.lastID;

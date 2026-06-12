@@ -15,9 +15,15 @@
             </div>
             <h1 class="auth-title">Регистрация</h1>
             <form id="registerForm">
-                <div class="form-group">
-                    <label for="fullname">Имя и фамилия</label>
-                    <input type="text" id="fullname" name="fullname" placeholder="Иван Иванов">
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label>Имя *</label>
+                        <input type="text" id="firstname" name="firstname" required placeholder="Иван">
+                    </div>
+                    <div class="form-group half">
+                        <label>Фамилия *</label>
+                        <input type="text" id="lastname" name="lastname" required placeholder="Иванов">
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="phone">Телефон</label>

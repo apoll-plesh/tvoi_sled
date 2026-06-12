@@ -103,7 +103,8 @@ if (registerForm) {
     registerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const fullname = document.getElementById('fullname')?.value || '';
+        const firstname = document.getElementById('firstname').value;
+        const lastname = document.getElementById('lastname').value;
         const phone = document.getElementById('phone')?.value || '';
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
@@ -120,12 +121,18 @@ if (registerForm) {
         
         const errorDiv = document.getElementById('registerError');
         
+        if (password.length < 6) {
+            errorDiv.textContent = 'Пароль должен быть не менее 6 символов';
+            errorDiv.style.display = 'block';
+            return;
+        }
+        
         try {
             const response = await fetch('/api/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    email, password, fullname, phone,
+                    email, password, firstname, lastname, phone,
                     card_number, card_expiry, card_cvv,
                     agree
                 })

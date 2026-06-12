@@ -1082,7 +1082,6 @@ body {
     font-weight: 600;
     margin-bottom: 16px;
     padding-bottom: 8px;
-    border-bottom: 2px solid #0066cc;
     display: inline-block;
 }
 
@@ -1211,4 +1210,171 @@ body {
 
 .btn-secondary:hover {
     background-color: #d0d0d0;
+}
+
+/* ===== ПОИСК НАД КАРТОЙ ===== */
+.map-search-container {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    max-width: 500px;
+}
+
+.map-search-input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-size: 16px;
+}
+
+.map-search-input:focus {
+    outline: none;
+    border-color: #0066cc;
+    box-shadow: 0 0 0 3px rgba(0,102,204,0.1);
+}
+
+.map-search-btn {
+    background-color: #0066cc;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.map-search-btn:hover {
+    background-color: #0052a3;
+}
+
+/* Текстовое поле в модальном окне */
+textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-size: 16px;
+    font-family: inherit;
+    resize: vertical;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #0066cc;
+    box-shadow: 0 0 0 3px rgba(0,102,204,0.1);
+}
+
+/* Карточки чужих заявок в модальном окне */
+.other-proposal-card {
+    background-color: #f8f9fa;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid #eee;
+}
+
+.other-proposal-header {
+    margin-bottom: 12px;
+}
+
+.other-proposal-author {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #666;
+}
+
+.author-icon {
+    font-size: 16px;
+}
+
+.author-name {
+    font-weight: 500;
+    color: #1a1a1a;
+}
+
+.proposal-date {
+    font-size: 12px;
+    color: #999;
+}
+
+.other-proposal-title {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: #1a1a1a;
+}
+
+.other-proposal-description {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.4;
+    margin-bottom: 12px;
+}
+
+.other-proposal-actions {
+    display: flex;
+    gap: 16px;
+}
+
+.like-btn, .chat-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.like-btn {
+    color: #0066cc;
+}
+
+.like-btn:hover {
+    background-color: #e6f0ff;
+}
+
+.chat-btn {
+    color: #666;
+}
+
+.chat-btn:hover {
+    background-color: #f0f0f0;
+}
+
+/* Поля ввода в модальном окне заявки */
+.address-input, .title-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-size: 16px;
+}
+
+.mini-map-header {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.mini-map-search {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-size: 14px;
+}
+
+.mini-map-search-btn {
+    background-color: #0066cc;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    cursor: pointer;
 }
