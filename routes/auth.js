@@ -277,7 +277,7 @@ router.get('/user/proposals', (req, res) => {
         return res.status(401).json({ success: false, message: 'Не авторизован' });
     }
     
-    db.all(`SELECT id, title, description, address, likes, status, created_at 
+    db.all(`SELECT id, title, description, address, lat, lng, likes, status, created_at 
             FROM proposals 
             WHERE user_id = ? AND status != 'realized'
             ORDER BY created_at DESC`, 
@@ -287,7 +287,7 @@ router.get('/user/proposals', (req, res) => {
             return res.status(500).json({ success: false });
         }
         
-        db.all(`SELECT id, title, description, address, likes, status, created_at 
+        db.all(`SELECT id, title, description, address, lat, lng, likes, status, created_at 
                 FROM proposals 
                 WHERE user_id = ? AND status = 'realized'
                 ORDER BY created_at DESC`, 

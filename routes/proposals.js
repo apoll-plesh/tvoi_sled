@@ -43,27 +43,45 @@ router.get('/proposals/:id', (req, res) => {
 // Получить заявки по адресу (для формы)
 router.get('/proposals/by-address', (req, res) => {
     const db = getDb(req);
-    const address = req.query.address;
+    let address = req.query.address;
     
-    if (!address) {
+    console.log('🔍 Поиск заявок по адресу:', address);
+    
+    if (!address || address === 'Адрес не определён') {
         return res.json([]);
     }
     
-    db.all(`SELECT p.id, p.title, p.description, p.likes, p.created_at, 
+    address = address.toLowerCase().trim();
+    
+    db.all(`SELECT p.id, p.title, p.description, p.likes, p.created_at, p.address as proposal_address,
                    u.firstname, u.lastname
             FROM proposals p
             LEFT JOIN users u ON p.user_id = u.id
-            WHERE p.address LIKE ? AND p.status = 'published'
-            ORDER BY p.created_at DESC
-            LIMIT 20`,
-        [`%${address}%`],
+            WHERE p.status = 'published'
+            ORDER BY p.created_at DESC`,
+        [],
         (err, rows) => {
             if (err) {
+                console.error('Ошибка БД:', err);
                 res.status(500).json({ error: err.message });
                 return;
             }
             
-            const proposals = rows.map(row => ({
+            const filtered = rows.filter(row => {
+                if (!row.proposal_address) return false;
+                const proposalAddr = row.proposal_address.toLowerCase();
+                const addressParts = address.split(/[ ,]+/);
+                let matches = false;
+                for (const part of addressParts) {
+                    if (part.length > 3 && proposalAddr.includes(part)) {
+                        matches = true;
+                        break;
+                    }
+                }
+                return matches || proposalAddr.includes(address) || address.includes(proposalAddr);
+            });
+            
+            const proposals = filtered.map(row => ({
                 ...row,
                 author_name: row.firstname ? `${row.firstname} ${row.lastname || ''}`.trim() : 'Пользователь'
             }));

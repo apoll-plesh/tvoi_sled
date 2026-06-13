@@ -693,6 +693,7 @@ body {
 
 .carousel-section {
     margin: 60px 0 80px;
+    position: relative;
 }
 
 .carousel-header {
@@ -700,6 +701,7 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
+    position: relative;
 }
 
 .carousel-section__title {
@@ -720,6 +722,11 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: absolute;
+    right: 0;
+    top: 400%;
+    transform: translateY(-10%);
+    z-index: 10;
 }
 
 .carousel-next-btn:hover {
@@ -1161,6 +1168,22 @@ body {
     color: #444;
 }
 
+.ideas-table th:first-child, .ideas-table td:first-child {
+    width: 35%;
+}
+
+.ideas-table th:nth-child(2), .ideas-table td:nth-child(2) {
+    width: 35%;
+}
+
+.ideas-table th:nth-child(3), .ideas-table td:nth-child(3) {
+    width: 15%;
+}
+
+.ideas-table th:nth-child(4), .ideas-table td:nth-child(4) {
+    width: 15%;
+}
+
 .ideas-table tr:last-child td {
     border-bottom: none;
 }
@@ -1210,44 +1233,6 @@ body {
 
 .btn-secondary:hover {
     background-color: #d0d0d0;
-}
-
-/* ===== ПОИСК НАД КАРТОЙ ===== */
-.map-search-container {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 16px;
-    max-width: 500px;
-}
-
-.map-search-input {
-    flex: 1;
-    padding: 12px 16px;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    font-size: 16px;
-}
-
-.map-search-input:focus {
-    outline: none;
-    border-color: #0066cc;
-    box-shadow: 0 0 0 3px rgba(0,102,204,0.1);
-}
-
-.map-search-btn {
-    background-color: #0066cc;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.map-search-btn:hover {
-    background-color: #0052a3;
 }
 
 /* Текстовое поле в модальном окне */
@@ -1377,4 +1362,31 @@ textarea:focus {
     padding: 10px 20px;
     border-radius: 12px;
     cursor: pointer;
+}
+
+/* ===== УВЕДОМЛЕНИЯ (TOAST NOTIFICATIONS) ===== */
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+
+.notification {
+    animation: slideIn 0.3s ease;
+}
+
+.notification--success {
+    background-color: #10b981;
+}
+
+.notification--error {
+    background-color: #ef4444;
+}
+
+.notification--info {
+    background-color: #3b82f6;
 }

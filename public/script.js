@@ -6,6 +6,57 @@ let miniMap = null;
 let miniMapPlacemark = null;
 let currentLat = null;
 let currentLng = null;
+let isLiking = false;
+
+// ========== ФУНКЦИЯ ДЛЯ УВЕДОМЛЕНИЙ ==========
+function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification--${type}`;
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+        color: white;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 10000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideIn 0.3s ease;
+        cursor: pointer;
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+    
+    notification.onclick = () => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    };
+}
+
+// Добавляем CSS для анимации уведомлений
+if (!document.querySelector('#notification-styles')) {
+    const style = document.createElement('style');
+    style.id = 'notification-styles';
+    style.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+}
 
 // ========== ЗАГРУЗКА МЕТОК НА КАРТУ ==========
 
@@ -85,30 +136,6 @@ function initMap() {
     
     loadProposalsToMap(currentMap);
     
-    // Поиск на главной карте
-    const mapSearchBtn = document.getElementById('mapSearchBtn');
-    const mapSearchInput = document.getElementById('mapSearchInput');
-    
-    if (mapSearchBtn && mapSearchInput) {
-        mapSearchBtn.onclick = () => {
-            const query = mapSearchInput.value.trim();
-            if (!query) return;
-            
-            ymaps.geocode(query).then((res) => {
-                const firstGeoObject = res.geoObjects.get(0);
-                if (firstGeoObject) {
-                    const coords = firstGeoObject.geometry.getCoordinates();
-                    currentMap.setCenter(coords, 16);
-                    mapSearchInput.value = firstGeoObject.getAddressLine();
-                } else {
-                    alert('Адрес не найден');
-                }
-            }).catch(() => {
-                alert('Ошибка поиска');
-            });
-        };
-    }
-    
     // Клик по карте
     currentMap.events.add('click', (e) => {
         const coords = e.get('coords');
@@ -171,95 +198,53 @@ function openProposalFormModal(coords, address) {
         initMiniMap(coords, address);
     }, 100);
     
-    loadOtherProposals(address);
+    loadOtherProposalsByCoords(coords, address);
 }
 
-// Инициализация мини-карты
-function initMiniMap(coords, currentAddress) {
-    const miniMapContainer = document.getElementById('miniMap');
-    if (!miniMapContainer) return;
-    
-    miniMapContainer.innerHTML = '';
-    
-    miniMap = new ymaps.Map('miniMap', {
-        center: [coords[0], coords[1]],
-        zoom: 17,
-        controls: ['zoomControl']
-    });
-    
-    miniMapPlacemark = new ymaps.Placemark(
-        [coords[0], coords[1]],
-        {},
-        { preset: 'islands#blueCircleIcon' }
-    );
-    miniMap.geoObjects.add(miniMapPlacemark);
-    
-    // Поиск на мини-карте
-    const miniMapSearch = document.getElementById('miniMapSearch');
-    const miniMapSearchBtn = document.getElementById('miniMapSearchBtn');
-    
-    if (miniMapSearchBtn && miniMapSearch) {
-        const newBtn = miniMapSearchBtn.cloneNode(true);
-        miniMapSearchBtn.parentNode.replaceChild(newBtn, miniMapSearchBtn);
-        
-        newBtn.onclick = () => {
-            const query = miniMapSearch.value.trim();
-            if (!query) return;
-            
-            ymaps.geocode(query).then((res) => {
-                const firstGeoObject = res.geoObjects.get(0);
-                if (firstGeoObject) {
-                    const newCoords = firstGeoObject.geometry.getCoordinates();
-                    miniMap.setCenter(newCoords, 17);
-                    miniMapPlacemark.geometry.setCoordinates(newCoords);
-                    currentLat = newCoords[0];
-                    currentLng = newCoords[1];
-                    const newAddress = firstGeoObject.getAddressLine();
-                    document.getElementById('proposalAddress').value = newAddress;
-                    loadOtherProposals(newAddress);
-                } else {
-                    alert('Адрес не найден');
-                }
-            }).catch(() => {
-                alert('Ошибка поиска');
-            });
-        };
-    }
-    
-    // Клик на мини-карте
-    miniMap.events.add('click', (e) => {
-        const newCoords = e.get('coords');
-        currentLat = newCoords[0];
-        currentLng = newCoords[1];
-        miniMapPlacemark.geometry.setCoordinates(newCoords);
-        
-        ymaps.geocode(newCoords).then((res) => {
-            const firstGeoObject = res.geoObjects.get(0);
-            const address = firstGeoObject ? firstGeoObject.getAddressLine() : 'Адрес не определён';
-            document.getElementById('proposalAddress').value = address;
-            loadOtherProposals(address);
-        }).catch(() => {
-            document.getElementById('proposalAddress').value = 'Адрес не определён';
-            loadOtherProposals('Адрес не определён');
-        });
-    });
-}
-
-// Загрузка чужих заявок по адресу
-async function loadOtherProposals(address) {
+// Загрузка заявок по координатам (радиус 500 метров)
+async function loadOtherProposalsByCoords(coords, address) {
     const otherList = document.getElementById('otherProposalsList');
     if (!otherList) return;
     
+    console.log('🔍 Загружаем заявки для координат:', coords);
+    
     try {
-        const response = await fetch(`/api/proposals/by-address?address=${encodeURIComponent(address)}`);
-        const proposals = await response.json();
+        const response = await fetch('/api/proposals/published');
+        const allProposals = await response.json();
         
-        if (proposals.length === 0) {
-            otherList.innerHTML = '<p class="empty-row">Пока нет идей по этому адресу. Будьте первым!</p>';
+        // Функция для вычисления расстояния между двумя точками
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+        
+        // Фильтруем заявки в радиусе 500 метров
+        const nearbyProposals = allProposals.filter(proposal => {
+            const distance = getDistance(coords[0], coords[1], proposal.lat, proposal.lng);
+            return distance <= 0.5;
+        });
+        
+        console.log('📋 Найдено заявок рядом:', nearbyProposals.length);
+        
+        if (nearbyProposals.length === 0) {
+            otherList.innerHTML = '<p class="empty-row">Пока нет идей рядом с этим местом. Будьте первым!</p>';
             return;
         }
         
-        otherList.innerHTML = proposals.map(proposal => `
+        // Сортируем по расстоянию
+        nearbyProposals.sort((a, b) => {
+            const distA = getDistance(coords[0], coords[1], a.lat, a.lng);
+            const distB = getDistance(coords[0], coords[1], b.lat, b.lng);
+            return distA - distB;
+        });
+        
+        otherList.innerHTML = nearbyProposals.map(proposal => `
             <div class="other-proposal-card" data-id="${proposal.id}">
                 <div class="other-proposal-header">
                     <div class="other-proposal-author">
@@ -286,22 +271,118 @@ async function loadOtherProposals(address) {
         
         document.querySelectorAll('.chat-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                alert('Чат будет доступен в следующей версии');
+                showNotification('Чат будет доступен в следующей версии', 'info');
             });
         });
         
     } catch (error) {
         console.error('Ошибка загрузки заявок:', error);
-        otherList.innerHTML = '<p class="empty-row">Ошибка загрузки</p>';
+        otherList.innerHTML = '<p class="empty-row">Ошибка загрузки. Попробуйте снова.</p>';
     }
+}
+
+// Инициализация мини-карты
+function initMiniMap(coords, currentAddress) {
+    const miniMapContainer = document.getElementById('miniMap');
+    if (!miniMapContainer) return;
+    
+    miniMapContainer.innerHTML = '';
+    
+    if (typeof ymaps === 'undefined') {
+        setTimeout(() => initMiniMap(coords, currentAddress), 200);
+        return;
+    }
+    
+    miniMap = new ymaps.Map('miniMap', {
+        center: [coords[0], coords[1]],
+        zoom: 17,
+        controls: ['zoomControl']
+    });
+    
+    miniMapPlacemark = new ymaps.Placemark(
+        [coords[0], coords[1]],
+        {},
+        { preset: 'islands#blueCircleIcon' }
+    );
+    miniMap.geoObjects.add(miniMapPlacemark);
+    
+    // Поиск на мини-карте
+    const miniMapSearch = document.getElementById('miniMapSearch');
+    const miniMapSearchBtn = document.getElementById('miniMapSearchBtn');
+    
+    if (miniMapSearchBtn && miniMapSearch) {
+        const newBtn = miniMapSearchBtn.cloneNode(true);
+        miniMapSearchBtn.parentNode.replaceChild(newBtn, miniMapSearchBtn);
+        
+        newBtn.onclick = async () => {
+            const query = miniMapSearch.value.trim();
+            if (!query) {
+                showNotification('Введите адрес для поиска', 'error');
+                return;
+            }
+            
+            showNotification('Поиск адреса...', 'info');
+            
+            try {
+                const response = await fetch(`https://geocode-maps.yandex.ru/1.x/?apikey=ваш_ключ&geocode=${encodeURIComponent(query)}&format=json`);
+                // В бесплатной версии Яндекс.Карт API ключ не нужен для геокодирования на клиенте
+                // Используем ymaps.geocode
+                ymaps.geocode(query, { results: 1 }).then((res) => {
+                    const firstGeoObject = res.geoObjects.get(0);
+                    if (firstGeoObject) {
+                        const newCoords = firstGeoObject.geometry.getCoordinates();
+                        miniMap.setCenter(newCoords, 17);
+                        miniMapPlacemark.geometry.setCoordinates(newCoords);
+                        currentLat = newCoords[0];
+                        currentLng = newCoords[1];
+                        const newAddress = firstGeoObject.getAddressLine();
+                        document.getElementById('proposalAddress').value = newAddress;
+                        loadOtherProposalsByCoords(newCoords, newAddress);
+                        showNotification('Адрес найден', 'success');
+                    } else {
+                        showNotification('Адрес не найден', 'error');
+                    }
+                }).catch((err) => {
+                    console.error('Ошибка геокодирования:', err);
+                    showNotification('Ошибка поиска адреса', 'error');
+                });
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showNotification('Ошибка поиска', 'error');
+            }
+        };
+    }
+    
+    // Клик на мини-карте
+    miniMap.events.add('click', (e) => {
+        const newCoords = e.get('coords');
+        currentLat = newCoords[0];
+        currentLng = newCoords[1];
+        miniMapPlacemark.geometry.setCoordinates(newCoords);
+        
+        ymaps.geocode(newCoords).then((res) => {
+            const firstGeoObject = res.geoObjects.get(0);
+            const address = firstGeoObject ? firstGeoObject.getAddressLine() : 'Адрес не определён';
+            document.getElementById('proposalAddress').value = address;
+            loadOtherProposalsByCoords(newCoords, address);
+        }).catch(() => {
+            document.getElementById('proposalAddress').value = 'Адрес не определён';
+            loadOtherProposalsByCoords(newCoords, 'Адрес не определён');
+        });
+    });
 }
 
 // Обработчик лайка
 async function handleLikeClick(e) {
     e.stopPropagation();
+    if (isLiking) return;
+    
     const btn = e.currentTarget;
     const proposalId = btn.dataset.id;
     const likesSpan = btn.querySelector('.likes-count');
+    
+    isLiking = true;
+    btn.style.opacity = '0.6';
     
     try {
         const response = await fetch('/api/proposals/like', {
@@ -314,12 +395,16 @@ async function handleLikeClick(e) {
         if (data.success) {
             if (likesSpan) likesSpan.textContent = data.likes;
             btn.dataset.likes = data.likes;
+            showNotification('👍 Вы поддержали эту идею!', 'success');
         } else {
-            alert(data.message || 'Ошибка');
+            showNotification(data.message || 'Ошибка', 'error');
         }
     } catch (error) {
         console.error('Ошибка при лайке:', error);
-        alert('Ошибка соединения');
+        showNotification('Ошибка соединения', 'error');
+    } finally {
+        isLiking = false;
+        btn.style.opacity = '1';
     }
 }
 
@@ -380,7 +465,7 @@ if (proposalForm) {
                     addMarkerToMap(data.proposal);
                 }
                 
-                alert('Заявка успешно создана! Она появится на карте и в вашем профиле.');
+                showNotification('✅ Заявка успешно создана! Она появится на карте и в вашем профиле.', 'success');
             } else {
                 if (errorDiv) {
                     errorDiv.textContent = data.message;
@@ -397,7 +482,7 @@ if (proposalForm) {
     });
 }
 
-// Закрытие модального окна формы
+// Закрытие модального окна формы по крестику
 const closeProposalFormBtn = document.getElementById('closeProposalFormBtn');
 if (closeProposalFormBtn) {
     closeProposalFormBtn.addEventListener('click', () => {
@@ -407,21 +492,16 @@ if (closeProposalFormBtn) {
 }
 
 // ========== МОДАЛЬНОЕ ОКНО ДЛЯ КНОПКИ i (правила) ==========
-const modal = document.getElementById('infoModal');
+const infoModal = document.getElementById('infoModal');
 const openBtn = document.getElementById('infoModalBtn');
 const closeBtn = document.getElementById('closeModalBtn');
 
-if (openBtn && modal && closeBtn) {
+if (openBtn && infoModal && closeBtn) {
     openBtn.addEventListener('click', () => {
-        modal.style.display = 'flex';
+        infoModal.style.display = 'flex';
     });
     closeBtn.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
-    window.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.style.display = 'none';
-        }
+        infoModal.style.display = 'none';
     });
 }
 
@@ -429,7 +509,7 @@ if (openBtn && modal && closeBtn) {
 const searchBtn = document.querySelector('.search-btn');
 if (searchBtn) {
     searchBtn.addEventListener('click', () => {
-        alert('Поиск по сайту пока в разработке');
+        showNotification('🔍 Поиск по сайту пока в разработке', 'info');
     });
 }
 
@@ -578,18 +658,13 @@ async function openNewsModal(id) {
         newsModal.style.display = 'flex';
     } catch (error) {
         console.error('Ошибка загрузки новости:', error);
-        alert('Не удалось загрузить новость');
+        showNotification('Не удалось загрузить новость', 'error');
     }
 }
 
 if (closeNewsModalBtn && newsModal) {
     closeNewsModalBtn.addEventListener('click', () => {
         newsModal.style.display = 'none';
-    });
-    window.addEventListener('click', (e) => {
-        if (e.target === newsModal) {
-            newsModal.style.display = 'none';
-        }
     });
 }
 
@@ -601,12 +676,30 @@ if (closeDetailModalBtn && detailModal) {
     closeDetailModalBtn.addEventListener('click', () => {
         detailModal.style.display = 'none';
     });
-    window.addEventListener('click', (e) => {
-        if (e.target === detailModal) {
-            detailModal.style.display = 'none';
-        }
-    });
 }
+
+// ========== ЗАКРЫТИЕ МОДАЛЬНЫХ ОКОН ПО КЛИКУ ВНЕ ОКНА ==========
+window.addEventListener('click', (e) => {
+    const modal = document.getElementById('proposalFormModal');
+    if (e.target === modal) {
+        modal.style.display = 'none';
+    }
+    
+    const infoModalEl = document.getElementById('infoModal');
+    if (e.target === infoModalEl) {
+        infoModalEl.style.display = 'none';
+    }
+    
+    const newsModalEl = document.getElementById('newsModal');
+    if (e.target === newsModalEl) {
+        newsModalEl.style.display = 'none';
+    }
+    
+    const detailModalEl = document.getElementById('detailModal');
+    if (e.target === detailModalEl) {
+        detailModalEl.style.display = 'none';
+    }
+});
 
 // ========== ИНФОРМАЦИОННЫЙ БАННЕР (из БД) ==========
 async function loadBanner() {
@@ -634,9 +727,9 @@ async function loadBanner() {
         if (actionBtn) {
             if (config.button_text) {
                 actionBtn.style.display = 'flex';
-                actionBtn.textContent = config.button_text;
+                actionBtn.textContent = config.button_text;  // "Чат голосования"
                 actionBtn.onclick = () => {
-                    alert(`Функция "${config.button_text}" будет доступна после запуска чатов`);
+                    showNotification(`Функция "${config.button_text}" будет доступна после запуска чатов`, 'info');
                 };
             } else {
                 actionBtn.style.display = 'none';
@@ -710,7 +803,8 @@ function openBannerModal(config) {
             <div class="vote-options">
                 ${optionsHTML}
             </div>
-            <button class="modal__action-btn" id="modalActionBtn">${savedVote ? 'Изменить голос' : (config.button_text || 'Проголосовать')}</button>
+            <div id="voteSuccessMessage" class="form-success" style="display: none;"></div>
+            <button class="modal__action-btn" id="modalActionBtn">${savedVote ? 'Изменить голос' : 'Проголосовать'}</button>
         `;
     } else {
         modalHTML = `
@@ -728,6 +822,8 @@ function openBannerModal(config) {
         modalActionBtn.onclick = async () => {
             if (config.type === 'vote') {
                 const selected = document.querySelector('input[name="voteOption"]:checked');
+                const successDiv = document.getElementById('voteSuccessMessage');
+                
                 if (selected) {
                     const optionId = selected.value;
                     const optionText = selected.dataset.optionText;
@@ -740,19 +836,29 @@ function openBannerModal(config) {
                         const result = await response.json();
                         if (result.success) {
                             localStorage.setItem(`banner_vote_${config.id}`, optionId);
-                            alert(`Вы проголосовали за: "${optionText}". Спасибо!`);
-                            detailModal.style.display = 'none';
+                            
+                            if (successDiv) {
+                                successDiv.textContent = `✓ Спасибо, ваш голос за "${optionText}" сохранён!`;
+                                successDiv.style.display = 'block';
+                            }
+                            
+                            modalActionBtn.textContent = 'Изменить голос';
+                            
+                            setTimeout(() => {
+                                detailModal.style.display = 'none';
+                                showNotification(`✓ Спасибо за ваш голос за "${optionText}"!`, 'success');
+                            }, 2000);
                         } else {
-                            alert(result.error || 'Ошибка при голосовании');
+                            showNotification(result.error || 'Ошибка при голосовании', 'error');
                         }
                     } catch (error) {
-                        alert('Ошибка соединения');
+                        showNotification('Ошибка соединения', 'error');
                     }
                 } else {
-                    alert('Пожалуйста, выберите один из вариантов');
+                    showNotification('Пожалуйста, выберите один из вариантов', 'error');
                 }
             } else if (config.button_text) {
-                alert(`Функция "${config.button_text}" будет доступна после запуска чатов`);
+                showNotification(`Функция "${config.button_text}" будет доступна после запуска чатов`, 'info');
                 detailModal.style.display = 'none';
             }
         };
@@ -856,3 +962,8 @@ document.addEventListener('DOMContentLoaded', () => {
         loadNewsPage(1);
     }
 });
+
+// ========== ГЛОБАЛЬНЫЕ ФУНКЦИИ ДЛЯ ПРОФИЛЯ ==========
+window.openProposalFormModal = openProposalFormModal;
+window.currentLat = currentLat;
+window.currentLng = currentLng;

@@ -5,6 +5,39 @@ const forgotModal = document.getElementById('forgotModal');
 const closeForgotModalBtn = document.getElementById('closeForgotModalBtn');
 const forgotForm = document.getElementById('forgotForm');
 
+// Функция уведомлений
+function showNotificationAuth(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification--${type}`;
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+        color: white;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 10000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideIn 0.3s ease;
+        cursor: pointer;
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+    
+    notification.onclick = () => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    };
+}
+
 if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -21,14 +54,19 @@ if (loginForm) {
             const data = await response.json();
             
             if (data.success) {
-                window.location.href = data.redirect || '/';
+                showNotificationAuth('Вход выполнен! Перенаправление...', 'success');
+                setTimeout(() => {
+                    window.location.href = data.redirect || '/';
+                }, 1000);
             } else {
                 errorDiv.textContent = data.message;
                 errorDiv.style.display = 'block';
+                showNotificationAuth(data.message, 'error');
             }
         } catch (error) {
             errorDiv.textContent = 'Ошибка соединения с сервером';
             errorDiv.style.display = 'block';
+            showNotificationAuth('Ошибка соединения с сервером', 'error');
         }
     });
 }
@@ -71,6 +109,7 @@ if (forgotForm) {
                 successDiv.textContent = data.message;
                 successDiv.style.display = 'block';
                 errorDiv.style.display = 'none';
+                showNotificationAuth(data.message, 'success');
                 setTimeout(() => {
                     forgotModal.style.display = 'none';
                     successDiv.style.display = 'none';
@@ -80,10 +119,12 @@ if (forgotForm) {
                 errorDiv.textContent = data.message;
                 errorDiv.style.display = 'block';
                 successDiv.style.display = 'none';
+                showNotificationAuth(data.message, 'error');
             }
         } catch (error) {
             errorDiv.textContent = 'Ошибка соединения';
             errorDiv.style.display = 'block';
+            showNotificationAuth('Ошибка соединения', 'error');
         }
     });
 }
@@ -124,6 +165,7 @@ if (registerForm) {
         if (password.length < 6) {
             errorDiv.textContent = 'Пароль должен быть не менее 6 символов';
             errorDiv.style.display = 'block';
+            showNotificationAuth('Пароль должен быть не менее 6 символов', 'error');
             return;
         }
         
@@ -140,14 +182,19 @@ if (registerForm) {
             const data = await response.json();
             
             if (data.success) {
-                window.location.href = '/';
+                showNotificationAuth('Регистрация успешна! Перенаправление...', 'success');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1000);
             } else {
                 errorDiv.textContent = data.message;
                 errorDiv.style.display = 'block';
+                showNotificationAuth(data.message, 'error');
             }
         } catch (error) {
             errorDiv.textContent = 'Ошибка соединения с сервером';
             errorDiv.style.display = 'block';
+            showNotificationAuth('Ошибка соединения с сервером', 'error');
         }
     });
 }

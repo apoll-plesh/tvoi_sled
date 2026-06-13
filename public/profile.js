@@ -2,6 +2,38 @@
 
 let currentUserData = {};
 
+function showNotificationProfile(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification--${type}`;
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+        color: white;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 10000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideIn 0.3s ease;
+        cursor: pointer;
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+    
+    notification.onclick = () => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    };
+}
+
 function getGreeting() {
     const hour = new Date().getHours();
     if (hour < 6) return 'Доброй ночи';
@@ -10,7 +42,13 @@ function getGreeting() {
     return 'Добрый вечер';
 }
 
+function isProfilePage() {
+    return window.location.pathname === '/profile';
+}
+
 async function loadUserProfile() {
+    if (!isProfilePage()) return;
+    
     try {
         const response = await fetch('/api/user');
         const user = await response.json();
@@ -18,17 +56,27 @@ async function loadUserProfile() {
         
         const greeting = getGreeting();
         const firstName = user.firstname || 'Пользователь';
-        document.getElementById('greetingText').innerHTML = `${greeting}, <span id="userFirstName">${escapeHtmlProfile(firstName)}</span>!`;
+        const greetingEl = document.getElementById('greetingText');
+        if (greetingEl) {
+            greetingEl.innerHTML = `${greeting}, <span id="userFirstName">${escapeHtmlProfile(firstName)}</span>!`;
+        }
         
-        const fullName = (user.firstname || '') + ' ' + (user.lastname || '');
-        document.getElementById('userFullName').textContent = fullName.trim() || 'Не указано';
-        document.getElementById('userId').textContent = user.id || '—';
-        document.getElementById('userEmail').textContent = user.email || '—';
+        const fullNameEl = document.getElementById('userFullName');
+        if (fullNameEl) fullNameEl.textContent = (user.firstname || '') + ' ' + (user.lastname || '').trim() || 'Не указано';
         
-        if (user.card_last4) {
-            document.getElementById('userCard').textContent = `•••• ${user.card_last4}`;
-        } else {
-            document.getElementById('userCard').textContent = 'не привязана';
+        const userIdEl = document.getElementById('userId');
+        if (userIdEl) userIdEl.textContent = user.id || '—';
+        
+        const userEmailEl = document.getElementById('userEmail');
+        if (userEmailEl) userEmailEl.textContent = user.email || '—';
+        
+        const userCardEl = document.getElementById('userCard');
+        if (userCardEl) {
+            if (user.card_last4) {
+                userCardEl.textContent = `•••• ${user.card_last4}`;
+            } else {
+                userCardEl.textContent = 'не привязана';
+            }
         }
         
         loadUserStats();
@@ -40,54 +88,80 @@ async function loadUserProfile() {
 }
 
 async function loadUserStats() {
+    if (!isProfilePage()) return;
     try {
         const response = await fetch('/api/user/stats');
         const stats = await response.json();
         
-        document.getElementById('proposalsCount').textContent = stats.proposalsCount || 0;
-        document.getElementById('realizedCount').textContent = stats.realizedCount || 0;
-        document.getElementById('donationSum').textContent = (stats.donationSum || 0).toLocaleString() + ' ₽';
+        const proposalsCountEl = document.getElementById('proposalsCount');
+        if (proposalsCountEl) proposalsCountEl.textContent = stats.proposalsCount || 0;
+        
+        const realizedCountEl = document.getElementById('realizedCount');
+        if (realizedCountEl) realizedCountEl.textContent = stats.realizedCount || 0;
+        
+        const donationSumEl = document.getElementById('donationSum');
+        if (donationSumEl) donationSumEl.textContent = (stats.donationSum || 0).toLocaleString() + ' ₽';
     } catch (error) {
         console.error('Ошибка загрузки статистики:', error);
     }
 }
 
 async function loadUserProposals() {
+    if (!isProfilePage()) return;
     try {
         const response = await fetch('/api/user/proposals');
         const data = await response.json();
         
         const activeTbody = document.getElementById('activeIdeasList');
-        if (data.active && data.active.length > 0) {
-            activeTbody.innerHTML = data.active.map(proposal => `
-                <tr class="clickable-row" data-id="${proposal.id}" data-type="active">
-                    <td>${escapeHtmlProfile(proposal.title)}</td>
-                    <td>${escapeHtmlProfile(proposal.address)}</td>
-                    <td>№${proposal.id}</td>
-                    <td>${proposal.likes || 0}</td>
-                 </tr>
-            `).join('');
-        } else {
-            activeTbody.innerHTML = '<tr><td colspan="4" class="empty-row">У вас пока нет активных идей</td></tr>';
+        if (activeTbody) {
+            if (data.active && data.active.length > 0) {
+                activeTbody.innerHTML = data.active.map(proposal => `
+                    <tr class="clickable-row" data-lat="${proposal.lat || ''}" data-lng="${proposal.lng || ''}" data-address="${escapeHtmlProfile(proposal.address)}">
+                        <td>${escapeHtmlProfile(proposal.title)}</td>
+                        <td>${escapeHtmlProfile(proposal.address)}</td>
+                        <td>№${proposal.id}</td>
+                        <td>${proposal.likes || 0}</td>
+                    </tr>
+                `).join('');
+            } else {
+                activeTbody.innerHTML = '<tr><td colspan="4" class="empty-row">У вас пока нет активных идей</td></tr>';
+            }
         }
         
         const realizedTbody = document.getElementById('realizedIdeasList');
-        if (data.realized && data.realized.length > 0) {
-            realizedTbody.innerHTML = data.realized.map(proposal => `
-                <tr class="clickable-row" data-id="${proposal.id}" data-type="realized">
-                    <td>${escapeHtmlProfile(proposal.title)}</td>
-                    <td>${escapeHtmlProfile(proposal.address)}</td>
-                    <td>№${proposal.id}</td>
-                    <td>${formatDateProfile(proposal.created_at)}</td>
-                 </tr>
-            `).join('');
-        } else {
-            realizedTbody.innerHTML = '<tr><td colspan="4" class="empty-row">У вас пока нет реализованных идей</td></tr>';
+        if (realizedTbody) {
+            if (data.realized && data.realized.length > 0) {
+                realizedTbody.innerHTML = data.realized.map(proposal => `
+                    <tr class="clickable-row" data-lat="${proposal.lat || ''}" data-lng="${proposal.lng || ''}" data-address="${escapeHtmlProfile(proposal.address)}">
+                        <td>${escapeHtmlProfile(proposal.title)}</td>
+                        <td>${escapeHtmlProfile(proposal.address)}</td>
+                        <td>№${proposal.id}</td>
+                        <td>${formatDateProfile(proposal.created_at)}</td>
+                    </tr>
+                `).join('');
+            } else {
+                realizedTbody.innerHTML = '<tr><td colspan="4" class="empty-row">У вас пока нет реализованных идей</td></tr>';
+            }
         }
         
+        // Привязываем обработчики к строкам таблицы
         document.querySelectorAll('.clickable-row').forEach(row => {
             row.addEventListener('click', () => {
-                openProposalModal(row.dataset.id);
+                const lat = row.dataset.lat;
+                const lng = row.dataset.lng;
+                const address = row.dataset.address;
+                
+                if (lat && lng && lat !== '' && lng !== '' && window.openProposalFormModal) {
+                    window.currentLat = parseFloat(lat);
+                    window.currentLng = parseFloat(lng);
+                    const addressInput = document.getElementById('proposalAddress');
+                    if (addressInput && address) {
+                        addressInput.value = address;
+                    }
+                    window.openProposalFormModal([parseFloat(lat), parseFloat(lng)], address || 'Адрес не определён');
+                } else {
+                    showNotificationProfile('Координаты для этой заявки не найдены', 'error');
+                }
             });
         });
         
@@ -96,30 +170,7 @@ async function loadUserProposals() {
     }
 }
 
-// Открытие заявки из профиля
-async function openProposalModal(proposalId) {
-    try {
-        const response = await fetch(`/api/proposals/${proposalId}`);
-        const proposal = await response.json();
-        
-        if (proposal) {
-            if (typeof window.currentLat !== 'undefined') {
-                window.currentLat = proposal.lat;
-                window.currentLng = proposal.lng;
-            }
-            
-            if (typeof openProposalFormModal === 'function') {
-                openProposalFormModal([proposal.lat, proposal.lng], proposal.address);
-            } else {
-                alert('Детали заявки: ' + proposal.title + '\n' + proposal.description);
-            }
-        }
-    } catch (error) {
-        console.error('Ошибка загрузки заявки:', error);
-        alert('Не удалось загрузить детали заявки');
-    }
-}
-
+// Закрытие модального окна заявки (заглушка)
 const proposalModal = document.getElementById('proposalModal');
 const closeProposalModalBtn = document.getElementById('closeProposalModalBtn');
 
@@ -217,9 +268,9 @@ if (editForm) {
             const data = await response.json();
             
             if (data.success) {
-                successDiv.textContent = data.message;
-                successDiv.style.display = 'block';
+                // Убираем дублирующее сообщение - больше не показываем successDiv
                 errorDiv.style.display = 'none';
+                showNotificationProfile('✅ Профиль успешно обновлён!', 'success');
                 
                 setTimeout(() => {
                     editModal.style.display = 'none';
@@ -228,11 +279,12 @@ if (editForm) {
             } else {
                 errorDiv.textContent = data.message;
                 errorDiv.style.display = 'block';
-                successDiv.style.display = 'none';
+                showNotificationProfile(data.message, 'error');
             }
         } catch (error) {
             errorDiv.textContent = 'Ошибка соединения';
             errorDiv.style.display = 'block';
+            showNotificationProfile('Ошибка соединения с сервером', 'error');
         }
     });
 }
