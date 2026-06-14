@@ -36,7 +36,6 @@ router.get('/chats', (req, res) => {
     
     const userId = req.session.userId;
     
-    // Получаем чаты, в которых пользователь участвует
     db.all(`
         SELECT DISTINCT cp.proposal_id, cp.joined_at, cp.left_at,
                (SELECT COUNT(*) FROM comments WHERE proposal_id = cp.proposal_id AND created_at > cp.joined_at AND is_read = 0 AND user_id != ?) as unread_count
@@ -73,7 +72,6 @@ router.get('/chats', (req, res) => {
 });
 
 // Получить сообщения чата
-// Получить сообщения чата
 router.get('/chats/:proposalId/messages', (req, res) => {
     const db = getDb(req);
     if (!req.session.userId) {
@@ -83,7 +81,6 @@ router.get('/chats/:proposalId/messages', (req, res) => {
     const proposalId = parseInt(req.params.proposalId);
     const userId = req.session.userId;
     
-    // СНАЧАЛА ДОБАВЛЯЕМ ПОЛЬЗОВАТЕЛЯ В УЧАСТНИКИ (если его ещё нет)
     db.run(`INSERT OR IGNORE INTO chat_participants (user_id, proposal_id, joined_at) VALUES (?, ?, CURRENT_TIMESTAMP)`, 
         [userId, proposalId], 
         (err) => {
@@ -91,7 +88,6 @@ router.get('/chats/:proposalId/messages', (req, res) => {
                 console.error('Ошибка добавления участника:', err);
             }
             
-            // Теперь получаем сообщения
             db.all(`
                 SELECT c.id, c.text, c.created_at, c.user_id, c.is_read,
                        u.firstname, u.lastname
@@ -104,10 +100,8 @@ router.get('/chats/:proposalId/messages', (req, res) => {
                     return res.status(500).json({ success: false, error: err.message });
                 }
                 
-                // Помечаем сообщения как прочитанные
                 db.run(`UPDATE comments SET is_read = 1 WHERE proposal_id = ? AND user_id != ? AND is_read = 0`, [proposalId, userId]);
                 
-                // Получаем информацию о чате
                 getChatTitle(db, proposalId, (err, title) => {
                     getParticipantsCount(db, proposalId, (err, count) => {
                         res.json({
@@ -150,14 +144,12 @@ router.post('/chats/:proposalId/messages', (req, res) => {
         return res.status(400).json({ success: false, message: 'Сообщение не длиннее 1000 символов' });
     }
     
-    // Проверяем или добавляем участника чата
     db.get(`SELECT * FROM chat_participants WHERE user_id = ? AND proposal_id = ?`, [userId, proposalId], (err, participant) => {
         if (err) {
             return res.status(500).json({ success: false, error: err.message });
         }
         
         if (!participant) {
-            // Добавляем участника
             db.run(`INSERT INTO chat_participants (user_id, proposal_id) VALUES (?, ?)`, [userId, proposalId], (err) => {
                 if (err) {
                     return res.status(500).json({ success: false, error: err.message });
@@ -165,7 +157,6 @@ router.post('/chats/:proposalId/messages', (req, res) => {
                 saveMessage();
             });
         } else if (participant.left_at !== null) {
-            // Восстанавливаем участника
             db.run(`UPDATE chat_participants SET left_at = NULL, joined_at = CURRENT_TIMESTAMP WHERE user_id = ? AND proposal_id = ?`, [userId, proposalId], (err) => {
                 if (err) {
                     return res.status(500).json({ success: false, error: err.message });
@@ -184,7 +175,6 @@ router.post('/chats/:proposalId/messages', (req, res) => {
                         return res.status(500).json({ success: false, error: err.message });
                     }
                     
-                    // Получаем имя пользователя для ответа
                     db.get(`SELECT firstname, lastname FROM users WHERE id = ?`, [userId], (err, user) => {
                         res.json({
                             success: true,

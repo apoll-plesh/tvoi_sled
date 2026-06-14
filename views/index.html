@@ -8,13 +8,11 @@
 </head>
 <body>
     <div class="site-wrapper">
-        <!-- ШАПКА  -->
         <header class="header">
             <div class="container header__inner">
                 <div class="logo">
                     <a href="/">
-                        <img src="/images/logo.svg" alt="Твой след" class="logo__img">
-                        <span class="logo__text">Твой след</span>
+                        <img src="/images/logo2.png" alt="Твой след" class="logo__img">
                     </a>
                 </div>
                 <nav class="nav">
@@ -29,17 +27,14 @@
                 </div>
                 <div class="header__profile">
                     <a href="/profile" class="profile-icon">
-                        <img src="images/profile-icon.svg" alt="Профиль">
+                        <img src="images/icon_prof_n.png" alt="Профиль">
                     </a>
                 </div>
             </div>
         </header>
 
-        <!-- ОСНОВНОЕ СОДЕРЖИМОЕ -->
         <main class="main">
             <div class="container">
-
-                <!-- ИНФОРМАЦИОННО-АКЦИОННЫЙ БЛОК -->
                 <section class="info-banner" id="infoBanner">
                     <div class="info-banner__container">
                         <div class="info-banner__header">
@@ -57,28 +52,25 @@
                     </div>
                 </section>
                 
-                <!-- БЛОК 2: 4 блока новостей + кнопка -->
                     <section class="news-section">
                         <div class="news-grid" id="mainNewsGrid">
-                            <!-- Сюда подгрузятся новости через JS -->
+                            <!-- новости -->
                         </div>
                         <div class="news-section__more">
                             <a href="/news" class="btn-link">Другие новости →</a>
                         </div>
                     </section>
 
-                <!-- БЛОК 3: Текст с лозунгом и кнопкой i -->
                 <section class="callout-section">
                     <div class="callout">
                         <h2 class="callout__title">
                             Предложи свои идеи!
                             <button class="btn-info" id="infoModalBtn">i</button>
                         </h2>
-                        <p class="callout__text">Оставь свой след в истории своего города, помоги улучшить его для светлого будущего</p>
+                        <p class="callout__text">Оставь свой след в истории города. Каждая идея — кирпичик в будущем, где хочется жить, радоваться и возвращаться снова</p>
                     </div>
                 </section>
 
-                <!-- БЛОК 4: Карта во всю ширину -->
                 <section class="map-section">
                     <div id="yandexMap" class="map-container"></div>
                     <div class="map-credit">при поддержке Яндекс карт</div>
@@ -87,12 +79,10 @@
             </div>
         </main>
 
-        <!-- ФУТТЕР -->
         <footer class="footer">
             <div class="container">
                 <div class="footer__slogan">Спасибо, что вносите свой вклад в наше общее будущее!</div>
                 <div class="footer__columns">
-                    <!-- Левые ссылки (2 столбца) -->
                     <div class="footer__links">
                         <div class="footer__links-col">
                             <a href="#">Главная</a>
@@ -105,19 +95,16 @@
                             <a href="#">О нас</a>
                         </div>
                     </div>
-                    <!-- Лого по центру -->
                     <div class="footer__logo">
-                        <img src="images/logo.svg" alt="Твой след">
-                        <span>Твой след</span>
+                        <img src="/images/logo3.png" alt="Твой след">
                     </div>
-                    <!-- Контакты + мессенджеры -->
                     <div class="footer__contacts">
                         <div class="footer__contacts-title">Связаться с нами</div>
                         <div class="footer__socials">
-                            <a href="#"><img src="images/telegram.svg" alt="Telegram"></a>
-                            <a href="#"><img src="images/whatsapp.svg" alt="WhatsApp"></a>
-                            <a href="#"><img src="images/vk.svg" alt="ВКонтакте"></a>
-                            <a href="#"><img src="images/ok.svg" alt="Одноклассники"></a>
+                            <a href="#"><img src="/images/max.png" alt="MAX"></a>
+                            <a href="#"><img src="/images/email.png" alt="E-mail"></a>
+                            <a href="#"><img src="/images/vk.png" alt="ВКонтакте"></a>
+                            <a href="#"><img src="/images/odno.png" alt="Одноклассники"></a>
                         </div>
                     </div>
                 </div>
@@ -142,7 +129,7 @@
         <div class="modal__content modal__content--large">
             <button class="modal__close" id="closeDetailModalBtn">&times;</button>
             <div id="detailModalContent">
-                <!-- Сюда динамически подставляется содержимое -->
+                <!-- содержимое -->
             </div>
         </div>
     </div>
@@ -152,7 +139,7 @@
         <div class="modal__content modal__content--large">
             <button class="modal__close" id="closeNewsModalBtn">&times;</button>
             <div id="newsModalContent">
-                <!-- Сюда подставится содержимое новости -->
+                <!-- содержимое новости -->
             </div>
         </div>
     </div>

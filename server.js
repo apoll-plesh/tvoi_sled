@@ -3,7 +3,6 @@ const session = require('express-session');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 
-// Отладка ошибок
 process.on('uncaughtException', (err) => {
     console.error('❌ НЕПЕРЕХВАЧЕННАЯ ОШИБКА:', err);
 });
@@ -14,13 +13,9 @@ process.on('unhandledRejection', (reason, promise) => {
 
 const app = express();
 const PORT = 3000;
-
-// Подключаем базу данных
 const db = new sqlite3.Database('./database.sqlite');
 
-// Делаем db доступным для маршрутов
 app.locals.db = db;
-console.log('📁 База данных подключена, app.locals.db установлен');
 
 // ========== СОЗДАНИЕ ТАБЛИЦ ==========
 db.serialize(() => {
@@ -66,7 +61,7 @@ db.serialize(() => {
         FOREIGN KEY (user_id) REFERENCES users(id)
     )`);
 
-    // Таблица участников чатов (для отслеживания, кто в каком чате состоит)
+    // Таблица участников чатов 
     db.run(`CREATE TABLE IF NOT EXISTS chat_participants (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
@@ -124,7 +119,7 @@ db.serialize(() => {
     
     // ========== ДЕМО-ДАННЫЕ ==========
     
-    // Добавляем тестового пользователя
+    // Тестовый пользователь
     db.get(`SELECT COUNT(*) as count FROM users`, (err, row) => {
         if (err) return;
         if (row.count === 0) {
@@ -132,11 +127,10 @@ db.serialize(() => {
             const hashedPassword = bcrypt.hashSync('123456', 10);
             db.run(`INSERT INTO users (email, password, firstname, lastname, phone) VALUES (?, ?, ?, ?, ?)`,
                 ['test@test.ru', hashedPassword, 'Тестовый', 'Пользователь', '+7 (999) 123-45-67']);
-            console.log('👤 Добавлен тестовый пользователь: test@test.ru / 123456');
         }
     });
     
-    // Добавляем тестовые новости (12 шт)
+    // Тестовые новости 
     db.get(`SELECT COUNT(*) as count FROM news`, (err, row) => {
         if (err) return;
         if (row.count === 0) {
@@ -153,7 +147,6 @@ db.serialize(() => {
                 { title: 'Поможем парку вместе!', excerpt: 'Волонтёрская акция по уборке парка...', content: 'Полный текст новости: В эту субботу состоится акция по уборке парка.', image: '/images/news10.jpg', date: '2026-03-28 11:00:00', is_main: 0 },
                 { title: 'Освещение во дворах', excerpt: 'Новые фонари установили в 10 дворах...', content: 'Полный текст новости: В рамках программы "Светлый город" установлены новые фонари.', image: '/images/news11.jpg', date: '2026-03-20 09:45:00', is_main: 0 },
                 { title: 'Велоинфраструктура', excerpt: 'План развития велодорожек на 2026 год...', content: 'Полный текст новости: Опубликован план развития велосипедной инфраструктуры.', image: '/images/news12.jpg', date: '2026-03-15 14:00:00', is_main: 0 },
-                // ДОПОЛНИТЕЛЬНЫЕ НОВОСТИ (для пагинации)
                 { title: 'Ремонт тротуаров на Невском', excerpt: 'Начался долгожданный ремонт тротуаров на главной улице города...', content: 'Полный текст новости: Работы планируют завершить к августу.', image: '/images/news13.jpg', date: '2026-03-10 10:00:00', is_main: 0 },
                 { title: 'Новая детская площадка в Автово', excerpt: 'Открылась современная площадка для детей всех возрастов...', content: 'Полный текст новости: Площадка оборудована безопасными качелями и горками.', image: '/images/news14.jpg', date: '2026-03-05 15:30:00', is_main: 0 },
                 { title: 'Акция "Чистый город"', excerpt: 'Присоединяйтесь к общегородскому субботнику 22 мая...', content: 'Полный текст новости: Ждём всех желающих с 10:00 у метро Площадь Восстания.', image: '/images/news15.jpg', date: '2026-03-01 09:00:00', is_main: 0 },
@@ -166,11 +159,10 @@ db.serialize(() => {
                 stmt.run(news.title, news.excerpt, news.content, news.image, news.date, news.is_main);
             });
             stmt.finalize();
-            console.log('📰 Добавлены тестовые новости (12 шт)');
         }
     });
     
-    // Добавляем тестовые заявки (6 шт с разными адресами, все published)
+    // Тестовые заявки 
     db.get(`SELECT COUNT(*) as count FROM proposals`, (err, row) => {
         if (err) return;
         if (row.count === 0) {
@@ -192,12 +184,11 @@ db.serialize(() => {
                     stmt.run(userId, prop.title, prop.description, prop.address, prop.lat, prop.lng, prop.status, prop.likes);
                 });
                 stmt.finalize();
-                console.log('📋 Добавлены тестовые заявки (6 шт, все опубликованы)');
             });
         }
     });
     
-    // Добавляем тестовый баннер
+    // Тестовый баннер
     db.get(`SELECT COUNT(*) as count FROM banner_config`, (err, row) => {
         if (err) return;
         if (row.count === 0) {
@@ -218,17 +209,14 @@ db.serialize(() => {
                             optStmt.run(bannerId, opt);
                         });
                         optStmt.finalize();
-                        console.log('🎯 Добавлен тестовый баннер');
                     }
                 }
             );
         }
     });
     
-    console.log('✅ База данных готова');
 });
 
-// ========== MIDDLEWARE ==========
 app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -254,7 +242,6 @@ app.use('/api', chatRoutes);
 
 // ========== ЗАПУСК СЕРВЕРА ==========
 app.listen(PORT, () => {
-    console.log(`🚀 Сервер запущен: http://localhost:${PORT}`);
-    console.log(`📁 Статика из папки public`);
-    console.log(`👤 Тестовый пользователь: test@test.ru / 123456`);
+    console.log(`Сервер запущен: http://localhost:${PORT}`);
+    console.log(`Тестовый пользователь: test@test.ru / 123456`);
 });

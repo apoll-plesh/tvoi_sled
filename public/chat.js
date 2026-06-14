@@ -5,7 +5,6 @@ let currentChatTitle = '';
 let allMessages = [];
 let otherChats = [];
 
-// Получаем ID чата из URL
 function getProposalIdFromUrl() {
     const path = window.location.pathname;
     const match = path.match(/\/chat\/(\d+)/);
@@ -58,7 +57,7 @@ async function loadMessages() {
             allMessages = data.messages;
             currentChatTitle = data.title;
             document.getElementById('chatTitle').textContent = data.title;
-            document.getElementById('chatParticipants').textContent = `👥 ${data.participants_count} участников`;
+            document.getElementById('chatParticipants').textContent = `${data.participants_count} участников`;
             
             renderMessages(allMessages);
         } else {
@@ -88,7 +87,6 @@ function renderMessages(messages) {
         </div>
     `).join('');
     
-    // Скролл вниз
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
@@ -156,13 +154,12 @@ async function loadOtherChats() {
                     <div class="chat-list-item__icon">💬</div>
                     <div class="chat-list-item__info">
                         <div class="chat-list-item__title">${escapeHtmlChat(chat.title)}</div>
-                        <div class="chat-list-item__meta">👥 ${chat.participants_count} участников</div>
+                        <div class="chat-list-item__meta">${chat.participants_count} участников</div>
                     </div>
                     ${chat.unread_count > 0 ? `<div class="chat-list-item__unread">${chat.unread_count}</div>` : ''}
                 </div>
             `).join('');
             
-            // Обработчики кликов по чатам
             document.querySelectorAll('.chat-list-item').forEach(item => {
                 item.addEventListener('click', () => {
                     const id = item.dataset.id;
@@ -249,7 +246,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loadMessages();
         loadOtherChats();
         
-        // Обработчики кнопок
         const sendBtn = document.getElementById('sendMessageBtn');
         if (sendBtn) sendBtn.addEventListener('click', sendMessage);
         
@@ -295,9 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
             doSearchBtn.addEventListener('click', searchInChat);
         }
         
-        // Обновление списка чатов каждые 30 секунд
         setInterval(loadOtherChats, 30000);
-        // Обновление сообщений каждые 5 секунд
         setInterval(loadMessages, 5000);
     }
 });

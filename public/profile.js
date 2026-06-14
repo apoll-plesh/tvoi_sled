@@ -144,7 +144,6 @@ async function loadUserProposals() {
             }
         }
         
-        // Привязываем обработчики к строкам таблицы
         document.querySelectorAll('.clickable-row').forEach(row => {
             row.addEventListener('click', () => {
                 const lat = row.dataset.lat;
@@ -170,8 +169,6 @@ async function loadUserProposals() {
     }
 }
 
-// Добавь эту функцию в profile.js после loadUserProposals()
-
 async function loadUserChats() {
     const chatsContainer = document.getElementById('chatsList');
     if (!chatsContainer) return;
@@ -186,7 +183,7 @@ async function loadUserChats() {
                     <div class="chat-list-item-small__icon">💬</div>
                     <div class="chat-list-item-small__info">
                         <div class="chat-list-item-small__title">${escapeHtmlProfile(chat.title)}</div>
-                        <div class="chat-list-item-small__meta">👥 ${chat.participants_count} участников</div>
+                        <div class="chat-list-item-small__meta">${chat.participants_count} участников</div>
                     </div>
                     ${chat.unread_count > 0 ? `<div class="chat-list-item-small__unread">${chat.unread_count}</div>` : ''}
                 </div>
@@ -207,13 +204,11 @@ async function loadUserChats() {
     }
 }
 
-// Не забудь вызвать функцию в DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
     loadUserProfile();
     loadUserChats(); // Добавь эту строку
 });
 
-// Закрытие модального окна заявки (заглушка)
 const proposalModal = document.getElementById('proposalModal');
 const closeProposalModalBtn = document.getElementById('closeProposalModalBtn');
 
@@ -311,7 +306,6 @@ if (editForm) {
             const data = await response.json();
             
             if (data.success) {
-                // Убираем дублирующее сообщение - больше не показываем successDiv
                 errorDiv.style.display = 'none';
                 showNotificationProfile('✅ Профиль успешно обновлён!', 'success');
                 

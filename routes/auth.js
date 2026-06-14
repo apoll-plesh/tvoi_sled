@@ -13,7 +13,6 @@ function logError(err, req, res, message) {
     console.error('Стек:', err?.stack);
 }
 
-// Получаем доступ к базе данных
 const getDb = (req) => req.app.locals.db;
 
 // ========== РЕГИСТРАЦИЯ ==========
@@ -29,7 +28,6 @@ router.post('/register', async (req, res) => {
     
     const { email, password, firstname, lastname, phone, card_number, card_expiry, card_cvv, agree } = req.body;
     
-    // Валидация
     if (!email || !password) {
         return res.status(400).json({ success: false, message: 'Email и пароль обязательны' });
     }
@@ -177,12 +175,10 @@ router.put('/user', (req, res) => {
     
     const { firstname, lastname, email, phone, card_number, card_expiry, card_cvv } = req.body;
     
-    // Валидация email
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         return res.status(400).json({ success: false, message: 'Введите корректный email' });
     }
     
-    // Валидация карты (если заполнена)
     if (card_number && card_number.length > 0) {
         const cleanCard = card_number.replace(/\s/g, '');
         if (cleanCard.length < 16 || !/^\d+$/.test(cleanCard)) {
@@ -190,7 +186,6 @@ router.put('/user', (req, res) => {
         }
     }
     
-    // Формируем запрос динамически
     const updates = [];
     const values = [];
     

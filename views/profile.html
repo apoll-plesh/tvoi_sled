@@ -8,13 +8,11 @@
 </head>
 <body>
     <div class="site-wrapper">
-        <!-- ШАПКА -->
         <header class="header">
             <div class="container header__inner">
                 <div class="logo">
                     <a href="/">
-                        <img src="/images/logo.svg" alt="Твой след" class="logo__img">
-                        <span class="logo__text">Твой след</span>
+                        <img src="/images/logo2.png" alt="Твой след" class="logo__img">
                     </a>
                 </div>
                 <nav class="nav">
@@ -29,26 +27,21 @@
                 </div>
                 <div class="header__profile">
                     <a href="/profile" class="profile-icon">
-                        <img src="/images/profile-icon.svg" alt="Профиль">
+                        <img src="/images/icon_prof_a.png" alt="Профиль">
                     </a>
                 </div>
             </div>
         </header>
 
-        <!-- ОСНОВНОЕ СОДЕРЖИМОЕ -->
         <main class="main">
             <div class="container">
                 
-                <!-- БЛОК ПРИВЕТСТВИЯ С КНОПКОЙ ВЫЙТИ -->
                 <div class="profile-header">
                     <h1 class="profile-greeting" id="greetingText">Добрый день, <span id="userFirstName">Имя</span>!</h1>
                     <button class="logout-btn-header" id="logoutBtnProfile">Выйти</button>
                 </div>
 
-                <!-- ТРИ КОЛОНКИ -->
-                <div class="profile-three-columns">
-                    
-                    <!-- ЛЕВАЯ КОЛОНКА: Аватар -->
+                <div class="profile-three-columns"> 
                     <div class="profile-column profile-column--avatar">
                         <div class="avatar-container">
                             <img src="/images/default-avatar.svg" alt="Аватар" class="avatar-img" id="avatarImg" onerror="this.style.display='none'; document.getElementById('avatarPlaceholder').style.display='flex';">
@@ -56,11 +49,10 @@
                         </div>
                     </div>
 
-                    <!-- ЦЕНТРАЛЬНАЯ КОЛОНКА: Данные пользователя -->
                     <div class="profile-column profile-column--info">
                         <div class="info-header">
                             <h2 class="info-name" id="userFullName">Имя Фамилия</h2>
-                            <button class="edit-btn" id="editProfileBtn">✏️</button>
+                            <button class="edit-btn" id="editProfileBtn">✎</button>
                         </div>
                         <div class="info-details">
                             <div class="info-row"><span class="info-label">ID:</span> <span id="userId">—</span></div>
@@ -70,20 +62,19 @@
                         <div class="info-stats">
                             <div class="stat-card-small">
                                 <div class="stat-number" id="proposalsCount">0</div>
-                                <div class="stat-label">предложенных идей</div>
+                                <div class="stat-label">Предложенных<br>идей</div>
                             </div>
                             <div class="stat-card-small">
                                 <div class="stat-number" id="realizedCount">0</div>
-                                <div class="stat-label">реализованных идей</div>
+                                <div class="stat-label">Реализованных<br>идей</div>
                             </div>
                             <div class="stat-card-small">
                                 <div class="stat-number" id="donationSum">0 ₽</div>
-                                <div class="stat-label">благотворительный вклад</div>
+                                <div class="stat-label">Благотворительный<br>вклад</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- ПРАВАЯ КОЛОНКА: Чаты -->
                     <div class="profile-column profile-column--chats">
                         <h3 class="chats-title">Чаты</h3>
                         <div class="chats-list" id="chatsList">
@@ -92,7 +83,6 @@
                     </div>
                 </div>
 
-                <!-- БЛОК "ВАШИ ИДЕИ" -->
                 <section class="user-ideas-section">
                     <div class="section-header">
                         <h2 class="section-title">Ваши идеи</h2>
@@ -111,7 +101,6 @@
                     </div>
                 </section>
 
-                <!-- БЛОК "ИСПОЛНЕННЫЕ ИДЕИ" -->
                 <section class="user-ideas-section">
                     <h2 class="section-title">Исполненные идеи</h2>
                     <div class="ideas-table-container">
@@ -129,7 +118,6 @@
             </div>
         </main>
 
-        <!-- ФУТТЕР -->
         <footer class="footer">
             <div class="container">
                 <div class="footer__slogan">Спасибо, что вносите свой вклад в наше общее будущее!</div>
@@ -147,16 +135,15 @@
                         </div>
                     </div>
                     <div class="footer__logo">
-                        <img src="/images/logo.svg" alt="Твой след">
-                        <span>Твой след</span>
+                        <img src="/images/logo3.png" alt="Твой след">
                     </div>
                     <div class="footer__contacts">
                         <div class="footer__contacts-title">Связаться с нами</div>
                         <div class="footer__socials">
-                            <a href="#"><img src="/images/telegram.svg" alt="Telegram"></a>
-                            <a href="#"><img src="/images/whatsapp.svg" alt="WhatsApp"></a>
-                            <a href="#"><img src="/images/vk.svg" alt="ВКонтакте"></a>
-                            <a href="#"><img src="/images/ok.svg" alt="Одноклассники"></a>
+                            <a href="#"><img src="/images/max.png" alt="MAX"></a>
+                            <a href="#"><img src="/images/email.png" alt="E-mail"></a>
+                            <a href="#"><img src="/images/vk.png" alt="ВКонтакте"></a>
+                            <a href="#"><img src="/images/odno.png" alt="Одноклассники"></a>
                         </div>
                     </div>
                 </div>

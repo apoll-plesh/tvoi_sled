@@ -41,7 +41,7 @@ function showNotification(message, type = 'success') {
     };
 }
 
-// Добавляем CSS для анимации уведомлений
+// CSS для анимации уведомлений
 if (!document.querySelector('#notification-styles')) {
     const style = document.createElement('style');
     style.id = 'notification-styles';
@@ -136,7 +136,6 @@ function initMap() {
     
     loadProposalsToMap(currentMap);
     
-    // Клик по карте
     currentMap.events.add('click', (e) => {
         const coords = e.get('coords');
         currentLat = coords[0];
@@ -212,7 +211,6 @@ async function loadOtherProposalsByCoords(coords, address) {
         const response = await fetch('/api/proposals/published');
         const allProposals = await response.json();
         
-        // Функция для вычисления расстояния между двумя точками
         function getDistance(lat1, lon1, lat2, lon2) {
             const R = 6371;
             const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -224,7 +222,6 @@ async function loadOtherProposalsByCoords(coords, address) {
             return R * c;
         }
         
-        // Фильтруем заявки в радиусе 500 метров
         const nearbyProposals = allProposals.filter(proposal => {
             const distance = getDistance(coords[0], coords[1], proposal.lat, proposal.lng);
             return distance <= 0.5;
@@ -237,7 +234,6 @@ async function loadOtherProposalsByCoords(coords, address) {
             return;
         }
         
-        // Сортируем по расстоянию
         nearbyProposals.sort((a, b) => {
             const distA = getDistance(coords[0], coords[1], a.lat, a.lng);
             const distB = getDistance(coords[0], coords[1], b.lat, b.lng);
@@ -257,9 +253,9 @@ async function loadOtherProposalsByCoords(coords, address) {
                 <div class="other-proposal-description">${escapeHtml(proposal.description)}</div>
                 <div class="other-proposal-actions">
                     <button class="like-btn" data-id="${proposal.id}" data-likes="${proposal.likes}">
-                        👍 <span class="likes-count">${proposal.likes}</span>
+                        ❤ <span class="likes-count">${proposal.likes}</span>
                     </button>
-                    <button class="chat-btn" data-id="${proposal.id}">Чат</button>
+                    <button class="chat-btn" data-id="${proposal.id}">💬 Чат</button>
                 </div>
             </div>
         `).join('');
@@ -333,8 +329,6 @@ function initMiniMap(coords, currentAddress) {
             
             try {
                 const response = await fetch(`https://geocode-maps.yandex.ru/1.x/?apikey=ваш_ключ&geocode=${encodeURIComponent(query)}&format=json`);
-                // В бесплатной версии Яндекс.Карт API ключ не нужен для геокодирования на клиенте
-                // Используем ymaps.geocode
                 ymaps.geocode(query, { results: 1 }).then((res) => {
                     const firstGeoObject = res.geoObjects.get(0);
                     if (firstGeoObject) {
@@ -403,7 +397,7 @@ async function handleLikeClick(e) {
         if (data.success) {
             if (likesSpan) likesSpan.textContent = data.likes;
             btn.dataset.likes = data.likes;
-            showNotification('👍 Вы поддержали эту идею!', 'success');
+            showNotification('Вы поддержали эту идею!', 'success');
         } else {
             showNotification(data.message || 'Ошибка', 'error');
         }
@@ -735,7 +729,7 @@ async function loadBanner() {
         if (actionBtn) {
             if (config.button_text) {
                 actionBtn.style.display = 'flex';
-                actionBtn.textContent = config.button_text;  // "Чат голосования"
+                actionBtn.textContent = config.button_text; 
                 actionBtn.onclick = () => {
                     window.location.href = '/chat/0';
                 };
