@@ -46,4 +46,9 @@ router.get('/profile', requireAuth, (req, res) => {
     res.sendFile(path.join(__dirname, '../views', 'profile.html'));
 });
 
+// Новая страница чата
+router.get('/chat/:proposalId', requireAuth, (req, res) => {
+    res.sendFile(path.join(__dirname, '../views', 'chat.html'));
+});
+
 module.exports = router;

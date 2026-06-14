@@ -259,7 +259,7 @@ async function loadOtherProposalsByCoords(coords, address) {
                     <button class="like-btn" data-id="${proposal.id}" data-likes="${proposal.likes}">
                         👍 <span class="likes-count">${proposal.likes}</span>
                     </button>
-                    <button class="chat-btn" data-id="${proposal.id}">💬 Чат</button>
+                    <button class="chat-btn" data-id="${proposal.id}">Чат</button>
                 </div>
             </div>
         `).join('');
@@ -279,6 +279,14 @@ async function loadOtherProposalsByCoords(coords, address) {
         console.error('Ошибка загрузки заявок:', error);
         otherList.innerHTML = '<p class="empty-row">Ошибка загрузки. Попробуйте снова.</p>';
     }
+
+    document.querySelectorAll('.chat-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const proposalId = btn.dataset.id;
+            window.location.href = `/chat/${proposalId}`;
+        });
+    });
 }
 
 // Инициализация мини-карты
@@ -729,7 +737,7 @@ async function loadBanner() {
                 actionBtn.style.display = 'flex';
                 actionBtn.textContent = config.button_text;  // "Чат голосования"
                 actionBtn.onclick = () => {
-                    showNotification(`Функция "${config.button_text}" будет доступна после запуска чатов`, 'info');
+                    window.location.href = '/chat/0';
                 };
             } else {
                 actionBtn.style.display = 'none';

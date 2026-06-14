@@ -60,10 +60,22 @@ db.serialize(() => {
         proposal_id INTEGER NOT NULL,
         user_id INTEGER NOT NULL,
         text TEXT NOT NULL,
-        is_moderated INTEGER DEFAULT 0,
+        is_read INTEGER DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (proposal_id) REFERENCES proposals(id),
         FOREIGN KEY (user_id) REFERENCES users(id)
+    )`);
+
+    // Таблица участников чатов (для отслеживания, кто в каком чате состоит)
+    db.run(`CREATE TABLE IF NOT EXISTS chat_participants (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        proposal_id INTEGER NOT NULL,
+        left_at DATETIME,
+        joined_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id),
+        FOREIGN KEY (proposal_id) REFERENCES proposals(id),
+        UNIQUE(user_id, proposal_id)
     )`);
     
     // Таблица новостей
@@ -232,11 +244,13 @@ const pagesRoutes = require('./routes/pages');
 const authRoutes = require('./routes/auth');
 const newsRoutes = require('./routes/news');
 const proposalsRoutes = require('./routes/proposals');
+const chatRoutes = require('./routes/chat');
 
 app.use('/', pagesRoutes);
 app.use('/api', authRoutes);
 app.use('/api', newsRoutes);
 app.use('/api', proposalsRoutes);
+app.use('/api', chatRoutes);
 
 // ========== ЗАПУСК СЕРВЕРА ==========
 app.listen(PORT, () => {

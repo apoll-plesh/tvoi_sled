@@ -170,6 +170,49 @@ async function loadUserProposals() {
     }
 }
 
+// Добавь эту функцию в profile.js после loadUserProposals()
+
+async function loadUserChats() {
+    const chatsContainer = document.getElementById('chatsList');
+    if (!chatsContainer) return;
+    
+    try {
+        const response = await fetch('/api/chats');
+        const data = await response.json();
+        
+        if (data.success && data.chats.length > 0) {
+            chatsContainer.innerHTML = data.chats.map(chat => `
+                <div class="chat-list-item-small" data-id="${chat.proposal_id}">
+                    <div class="chat-list-item-small__icon">💬</div>
+                    <div class="chat-list-item-small__info">
+                        <div class="chat-list-item-small__title">${escapeHtmlProfile(chat.title)}</div>
+                        <div class="chat-list-item-small__meta">👥 ${chat.participants_count} участников</div>
+                    </div>
+                    ${chat.unread_count > 0 ? `<div class="chat-list-item-small__unread">${chat.unread_count}</div>` : ''}
+                </div>
+            `).join('');
+            
+            document.querySelectorAll('.chat-list-item-small').forEach(item => {
+                item.addEventListener('click', () => {
+                    const id = item.dataset.id;
+                    window.location.href = `/chat/${id}`;
+                });
+            });
+        } else {
+            chatsContainer.innerHTML = '<div class="chat-placeholder">У вас пока нет чатов</div>';
+        }
+    } catch (error) {
+        console.error('Ошибка загрузки чатов:', error);
+        chatsContainer.innerHTML = '<div class="chat-placeholder">Ошибка загрузки</div>';
+    }
+}
+
+// Не забудь вызвать функцию в DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    loadUserProfile();
+    loadUserChats(); // Добавь эту строку
+});
+
 // Закрытие модального окна заявки (заглушка)
 const proposalModal = document.getElementById('proposalModal');
 const closeProposalModalBtn = document.getElementById('closeProposalModalBtn');

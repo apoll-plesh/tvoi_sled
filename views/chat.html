@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Чат — Твой след</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="site-wrapper">
+        <!-- ШАПКА -->
+        <header class="header">
+            <div class="container header__inner">
+                <div class="logo">
+                    <a href="/">
+                        <img src="/images/logo.svg" alt="Твой след" class="logo__img">
+                        <span class="logo__text">Твой след</span>
+                    </a>
+                </div>
+                <nav class="nav">
+                    <ul class="nav__list">
+                        <li><a href="/news" class="nav__link">Новости</a></li>
+                        <li><a href="/about" class="nav__link">О нас</a></li>
+                    </ul>
+                </nav>
+                <div class="header__search">
+                    <input type="text" placeholder="Поиск по сайту..." class="search-input">
+                    <button class="search-btn">🔍</button>
+                </div>
+                <div class="header__profile">
+                    <a href="/profile" class="profile-icon">
+                        <img src="/images/profile-icon.svg" alt="Профиль">
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- ОСНОВНОЕ СОДЕРЖИМОЕ -->
+        <main class="main">
+            <div class="container">
+                
+                <!-- БЛОК ИНФОРМАЦИИ О ЧАТЕ -->
+                <div class="chat-info">
+                    <div class="chat-info__header">
+                        <div class="chat-info__icon">💬</div>
+                        <div class="chat-info__details">
+                            <h1 class="chat-info__title" id="chatTitle">Загрузка...</h1>
+                            <div class="chat-info__meta">
+                                <span class="chat-info__participants" id="chatParticipants">👥 0 участников</span>
+                                <span class="chat-info__online" id="chatOnline">🟢 Онлайн: --</span>
+                            </div>
+                        </div>
+                        <div class="chat-info__actions">
+                            <button class="chat-action-btn" id="notificationsBtn" title="Уведомления">🔔</button>
+                            <button class="chat-action-btn" id="searchChatBtn" title="Поиск по чату">🔍</button>
+                            <button class="chat-action-btn chat-action-btn--danger" id="leaveChatBtn" title="Выйти из чата">🚪 Выйти</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ДВЕ КОЛОНКИ -->
+                <div class="chat-two-columns">
+                    
+                    <!-- ЛЕВАЯ КОЛОНКА: Переписка -->
+                    <div class="chat-messages-column">
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="empty-row">Загрузка сообщений...</div>
+                        </div>
+                        <div class="chat-input-area">
+                            <textarea id="messageInput" placeholder="Введите сообщение..." rows="2" maxlength="1000"></textarea>
+                            <button id="sendMessageBtn" class="send-btn">📤 Отправить</button>
+                        </div>
+                    </div>
+
+                    <!-- ПРАВАЯ КОЛОНКА: Список других чатов -->
+                    <div class="chat-list-column">
+                        <h3 class="chat-list-title">Другие чаты</h3>
+                        <div class="chat-list" id="otherChatsList">
+                            <div class="empty-row">Загрузка...</div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </main>
+
+        <!-- ФУТТЕР -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer__slogan">Спасибо, что вносите свой вклад в наше общее будущее!</div>
+                <div class="footer__columns">
+                    <div class="footer__links">
+                        <div class="footer__links-col">
+                            <a href="/">Главная</a>
+                            <a href="/news">Новости</a>
+                            <a href="/profile">Профиль</a>
+                        </div>
+                        <div class="footer__links-col">
+                            <a href="#">Волонтерам</a>
+                            <a href="#">Поддержка</a>
+                            <a href="/about">О нас</a>
+                        </div>
+                    </div>
+                    <div class="footer__logo">
+                        <img src="/images/logo.svg" alt="Твой след">
+                        <span>Твой след</span>
+                    </div>
+                    <div class="footer__contacts">
+                        <div class="footer__contacts-title">Связаться с нами</div>
+                        <div class="footer__socials">
+                            <a href="#"><img src="/images/telegram.svg" alt="Telegram"></a>
+                            <a href="#"><img src="/images/whatsapp.svg" alt="WhatsApp"></a>
+                            <a href="#"><img src="/images/vk.svg" alt="ВКонтакте"></a>
+                            <a href="#"><img src="/images/ok.svg" alt="Одноклассники"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ПОИСКА ПО ЧАТУ -->
+    <div class="modal" id="searchModal">
+        <div class="modal__content">
+            <button class="modal__close" id="closeSearchModalBtn">&times;</button>
+            <h3>Поиск по чату</h3>
+            <input type="text" id="searchQueryInput" placeholder="Введите текст..." class="search-input-modal">
+            <button id="doSearchBtn" class="auth-btn" style="margin-top: 12px;">Найти</button>
+            <div id="searchResultsList" style="margin-top: 20px; max-height: 300px; overflow-y: auto;"></div>
+        </div>
+    </div>
+
+    <script src="/script.js"></script>
+    <script src="/chat.js"></script>
+</body>
+</html>
