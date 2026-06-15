@@ -59,8 +59,6 @@ if (loginForm) {
                     window.location.href = data.redirect || '/';
                 }, 1000);
             } else {
-                errorDiv.textContent = data.message;
-                errorDiv.style.display = 'block';
                 showNotificationAuth(data.message, 'error');
             }
         } catch (error) {
@@ -106,9 +104,6 @@ if (forgotForm) {
             const data = await response.json();
             
             if (data.success) {
-                successDiv.textContent = data.message;
-                successDiv.style.display = 'block';
-                errorDiv.style.display = 'none';
                 showNotificationAuth(data.message, 'success');
                 setTimeout(() => {
                     forgotModal.style.display = 'none';
@@ -116,9 +111,6 @@ if (forgotForm) {
                     document.getElementById('resetEmail').value = '';
                 }, 3000);
             } else {
-                errorDiv.textContent = data.message;
-                errorDiv.style.display = 'block';
-                successDiv.style.display = 'none';
                 showNotificationAuth(data.message, 'error');
             }
         } catch (error) {
@@ -163,8 +155,6 @@ if (registerForm) {
         const errorDiv = document.getElementById('registerError');
         
         if (password.length < 6) {
-            errorDiv.textContent = 'Пароль должен быть не менее 6 символов';
-            errorDiv.style.display = 'block';
             showNotificationAuth('Пароль должен быть не менее 6 символов', 'error');
             return;
         }
@@ -187,8 +177,6 @@ if (registerForm) {
                     window.location.href = '/';
                 }, 1000);
             } else {
-                errorDiv.textContent = data.message;
-                errorDiv.style.display = 'block';
                 showNotificationAuth(data.message, 'error');
             }
         } catch (error) {

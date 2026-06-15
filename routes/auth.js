@@ -175,11 +175,29 @@ router.put('/user', (req, res) => {
     
     const { firstname, lastname, email, phone, card_number, card_expiry, card_cvv } = req.body;
     
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        return res.status(400).json({ success: false, message: 'Введите корректный email' });
+    if (firstname !== undefined && firstname.trim() === '') {
+        return res.status(400).json({ success: false, message: 'Имя не может быть пустым' });
+    }
+    if (lastname !== undefined && lastname.trim() === '') {
+        return res.status(400).json({ success: false, message: 'Фамилия не может быть пустой' });
+    }
+    if (email !== undefined && email.trim() === '') {
+        return res.status(400).json({ success: false, message: 'Email не может быть пустым' });
     }
     
-    if (card_number && card_number.length > 0) {
+    if (email !== undefined && email.trim() !== '') {
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            return res.status(400).json({ success: false, message: 'Введите корректный email' });
+        }
+    }
+    
+    if (phone !== undefined && phone.trim() !== '') {
+        if (!/^[\+\d\s\-\(\)]{10,20}$/.test(phone)) {
+            return res.status(400).json({ success: false, message: 'Введите корректный номер телефона' });
+        }
+    }
+    
+    if (card_number !== undefined && card_number.trim() !== '') {
         const cleanCard = card_number.replace(/\s/g, '');
         if (cleanCard.length < 16 || !/^\d+$/.test(cleanCard)) {
             return res.status(400).json({ success: false, message: 'Некорректный номер карты (16 цифр)' });
@@ -191,31 +209,31 @@ router.put('/user', (req, res) => {
     
     if (firstname !== undefined) {
         updates.push('firstname = ?');
-        values.push(firstname);
+        values.push(firstname.trim());
     }
     if (lastname !== undefined) {
         updates.push('lastname = ?');
-        values.push(lastname);
+        values.push(lastname.trim());
     }
     if (email !== undefined) {
         updates.push('email = ?');
-        values.push(email);
+        values.push(email.trim());
     }
     if (phone !== undefined) {
         updates.push('phone = ?');
-        values.push(phone);
+        values.push(phone.trim() || null);
     }
     if (card_number !== undefined) {
         updates.push('card_number = ?');
-        values.push(card_number);
+        values.push(card_number.trim() || null);
     }
     if (card_expiry !== undefined) {
         updates.push('card_expiry = ?');
-        values.push(card_expiry);
+        values.push(card_expiry.trim() || null);
     }
     if (card_cvv !== undefined) {
         updates.push('card_cvv = ?');
-        values.push(card_cvv);
+        values.push(card_cvv.trim() || null);
     }
     
     if (updates.length === 0) {

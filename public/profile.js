@@ -306,7 +306,6 @@ if (editForm) {
             const data = await response.json();
             
             if (data.success) {
-                errorDiv.style.display = 'none';
                 showNotificationProfile('✅ Профиль успешно обновлён!', 'success');
                 
                 setTimeout(() => {
@@ -314,13 +313,9 @@ if (editForm) {
                     location.reload();
                 }, 1500);
             } else {
-                errorDiv.textContent = data.message;
-                errorDiv.style.display = 'block';
                 showNotificationProfile(data.message, 'error');
             }
         } catch (error) {
-            errorDiv.textContent = 'Ошибка соединения';
-            errorDiv.style.display = 'block';
             showNotificationProfile('Ошибка соединения с сервером', 'error');
         }
     });

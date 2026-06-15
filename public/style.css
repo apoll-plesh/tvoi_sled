@@ -1326,7 +1326,7 @@ body {
 
 .chats-list {
     border-radius: 14px;
-    max-height: 150px;
+    max-height: 300px;
     overflow-y: auto;
 }
 
@@ -1544,7 +1544,7 @@ body {
 }
 
 .notification--success {
-    background-color: #10b981;
+    background-color: #10b929;
 }
 
 .notification--error {

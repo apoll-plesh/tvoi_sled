@@ -41,23 +41,6 @@ function showNotification(message, type = 'success') {
     };
 }
 
-// CSS для анимации уведомлений
-if (!document.querySelector('#notification-styles')) {
-    const style = document.createElement('style');
-    style.id = 'notification-styles';
-    style.textContent = `
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes slideOut {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
-        }
-    `;
-    document.head.appendChild(style);
-}
-
 // ========== ЗАГРУЗКА МЕТОК НА КАРТУ ==========
 
 async function loadProposalsToMap(map) {
@@ -422,11 +405,11 @@ if (proposalForm) {
         const errorDiv = document.getElementById('proposalFormError');
         
         if (!title || !description) {
-            if (errorDiv) {
-                errorDiv.textContent = 'Заполните название и описание';
-                errorDiv.style.display = 'block';
+            if (errorDiv) {                
+                showNotification('Заполните название и описание', 'error');
+                return;
             }
-            return;
+            
         }
         
         if (title.length < 5) {
@@ -846,9 +829,9 @@ function openBannerModal(config) {
                             
                             modalActionBtn.textContent = 'Изменить голос';
                             
+                            showNotification(`✓ Спасибо за ваш голос за "${optionText}"!`, 'success');
                             setTimeout(() => {
                                 detailModal.style.display = 'none';
-                                showNotification(`✓ Спасибо за ваш голос за "${optionText}"!`, 'success');
                             }, 2000);
                         } else {
                             showNotification(result.error || 'Ошибка при голосовании', 'error');
